@@ -6,7 +6,6 @@ import requests
 
 app = FastAPI()
 
-# Libera o acesso para o aplicativo do celular se conectar
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,6 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 class UserMessage(BaseModel):
@@ -23,14 +23,10 @@ class UserMessage(BaseModel):
 
 @app.get("/")
 def home():
-    return {"status": "Servidor do Aquele Abraço em Execução!"}
+    return {"status": "Servidor Aquele Abraço (Groq + Gemini) Operacional!"}
 
 @app.post("/api/chat")
 def chat(payload: UserMessage):
-    if not GEMINI_API_KEY:
-        raise HTTPException(status_code=500, detail="Chave GEMINI_API_KEY não encontrada no servidor.")
-
-    # Diretriz e RAG do Agente Aquele Abraço
     system_instruction = (
         "Você é o 'Aquele Abraço', um assistente empático de regulação emocional e acolhimento. "
         "Ouça o usuário com carinho, ajude-o a encontrar o autoperdão, a paz e a resiliência. "
@@ -38,28 +34,52 @@ def chat(payload: UserMessage):
         "Nunca dê diagnósticos médicos nem receitas de remédios."
     )
 
-    # Constrói o histórico da conversa
-    contents = []
-    # Instrução do sistema como primeira mensagem do modelo
-    contents.append({"role": "user", "parts": [{"text": f"Instruções do Sistema: {system_instruction}"}]})
-    contents.append({"role": "model", "parts": [{"text": "Entendido. Estou pronto para acolher o usuário com empatia e profundidade."}]})
+    # 1. TENTA PROCESSAR PRIMEIRO NO GROQ (Llama 3 - Ultrarrápido)
+    if GROQ_API_KEY:
+        try:
+            messages = [{"role": "system", "content": system_instruction}]
+            for msg in payload.history[-6:]:
+                role = "user" if msg.get("sender") == "user" else "assistant"
+                messages.append({"role": role, "content": msg.get("text", "")})
+            messages.append({"role": "user", "content": payload.message})
 
-    for msg in payload.history[-6:]:
-        role = "user" if msg.get("sender") == "user" else "model"
-        contents.append({"role": role, "parts": [{"text": msg.get("text", "")}]})
+            url_groq = "https://api.groq.com/openai/v1/chat/completions"
+            headers_groq = {
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json"
+            }
+            data_groq = {
+                "model": "llama-3.3-70b-versatile",
+                "messages": messages,
+                "temperature": 0.7,
+                "max_tokens": 300
+            }
 
-    contents.append({"role": "user", "parts": [{"text": payload.message}]})
+            res = requests.post(url_groq, headers=headers_groq, json=data_groq, timeout=8)
+            if res.status_code == 200:
+                bot_reply = res.json()['choices'][0]['message']['content']
+                return {"response": bot_reply, "engine": "Groq-Llama3"}
+        except Exception as e:
+            print("Groq instável, ativando fallback do Gemini...", e)
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-    
-    headers = {"Content-Type": "application/json"}
-    data = {"contents": contents}
+    # 2. FALLBACK SE O GROQ FALHAR -> USA O GOOGLE GEMINI
+    if GEMINI_API_KEY:
+        try:
+            contents = [
+                {"role": "user", "parts": [{"text": f"Instrução: {system_instruction}"}]},
+                {"role": "model", "parts": [{"text": "Compreendido."}]}
+            ]
+            for msg in payload.history[-6:]:
+                role = "user" if msg.get("sender") == "user" else "model"
+                contents.append({"role": role, "parts": [{"text": msg.get("text", "")}]})
+            contents.append({"role": "user", "parts": [{"text": payload.message}]})
 
-    try:
-        response = requests.post(url, headers=headers, json=data)
-        res_json = response.json()
-        bot_reply = res_json['candidates'][0]['content']['parts'][0]['text']
-        return {"response": bot_reply}
-    except Exception as e:
-        print("Erro no Gemini:", e)
-        raise HTTPException(status_code=500, detail="Erro ao processar no Gemini.")
+            url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+            res = requests.post(url_gemini, headers={"Content-Type": "application/json"}, json={"contents": contents}, timeout=8)
+            if res.status_code == 200:
+                bot_reply = res.json()['candidates'][0]['content']['parts'][0]['text']
+                return {"response": bot_reply, "engine": "Google-Gemini"}
+        except Exception as e:
+            print("Erro no Gemini também:", e)
+
+    raise HTTPException(status_code=500, detail="Serviços de Inteligência temporariamente indisponíveis.")
