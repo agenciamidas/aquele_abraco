@@ -1,9 +1,8 @@
 import os
-import traceback
+import requests
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import requests
 
 app = FastAPI()
 
@@ -21,12 +20,10 @@ class UserMessage(BaseModel):
 
 @app.get("/")
 def home():
-    groq_ok = bool(os.getenv("GROQ_API_KEY"))
-    gemini_ok = bool(os.getenv("GEMINI_API_KEY"))
     return {
         "status": "Servidor do Aquele Abraço Ativo",
-        "groq_key_detectada": groq_ok,
-        "gemini_key_detectada": gemini_ok
+        "groq_key_detectada": bool(os.getenv("GROQ_API_KEY")),
+        "gemini_key_detectada": bool(os.getenv("GEMINI_API_KEY"))
     }
 
 @app.post("/api/chat")
@@ -41,7 +38,7 @@ def chat(payload: UserMessage):
         "Nunca dê diagnósticos médicos nem receitas de remédios."
     )
 
-    # 1. TENTATIVA GROQ
+    # 1. TENTATIVA GROQ (Modelo ativo: llama-3.1-8b-instant)
     if groq_key:
         try:
             messages = [{"role": "system", "content": system_prompt}]
@@ -56,7 +53,7 @@ def chat(payload: UserMessage):
                 "Content-Type": "application/json"
             }
             data_groq = {
-                "model": "llama-3.3-70b-versatile",
+                "model": "llama-3.1-8b-instant",
                 "messages": messages,
                 "temperature": 0.7,
                 "max_tokens": 300
@@ -70,9 +67,8 @@ def chat(payload: UserMessage):
                 print(f"[ERRO GROQ {res.status_code}]: {res.text}")
         except Exception as e:
             print(f"[EXCEÇÃO GROQ]: {e}")
-            traceback.print_exc()
 
-    # 2. TENTATIVA GEMINI
+    # 2. TENTATIVA GEMINI (Modelo ativo: gemini-2.0-flash)
     if gemini_key:
         try:
             contents = [
@@ -84,7 +80,7 @@ def chat(payload: UserMessage):
                 contents.append({"role": role, "parts": [{"text": msg.get("text", "")}]})
             contents.append({"role": "user", "parts": [{"text": payload.message}]})
 
-            url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+            url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_key}"
             res = requests.post(url_gemini, headers={"Content-Type": "application/json"}, json={"contents": contents}, timeout=10)
             if res.status_code == 200:
                 bot_reply = res.json()['candidates'][0]['content']['parts'][0]['text']
@@ -93,9 +89,8 @@ def chat(payload: UserMessage):
                 print(f"[ERRO GEMINI {res.status_code}]: {res.text}")
         except Exception as e:
             print(f"[EXCEÇÃO GEMINI]: {e}")
-            traceback.print_exc()
 
-    # 3. RESPOSTA DE SEGURANÇA (Garante HTTP 200 sem travar a interface)
+    # 3. FALLBACK DE SEGURANÇA
     return {
         "response": "Estou aqui escutando você. As chaves de inteligência em nuvem estão sendo sincronizadas no servidor, mas você pode continuar desabafando."
     }
