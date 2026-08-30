@@ -38,7 +38,7 @@ def chat(payload: UserMessage):
         "Nunca dê diagnósticos médicos nem receitas de remédios."
     )
 
-    # 1. TENTATIVA GROQ (Modelo ativo: llama-3.1-8b-instant)
+    # 1. TENTATIVA GROQ (Modelo: llama3-8b-8192)
     if groq_key:
         try:
             messages = [{"role": "system", "content": system_prompt}]
@@ -53,7 +53,7 @@ def chat(payload: UserMessage):
                 "Content-Type": "application/json"
             }
             data_groq = {
-                "model": "llama-3.1-8b-instant",
+                "model": "llama3-8b-8192",
                 "messages": messages,
                 "temperature": 0.7,
                 "max_tokens": 300
@@ -68,7 +68,7 @@ def chat(payload: UserMessage):
         except Exception as e:
             print(f"[EXCEÇÃO GROQ]: {e}")
 
-    # 2. TENTATIVA GEMINI (Modelo ativo: gemini-2.0-flash)
+    # 2. TENTATIVA GEMINI (Modelo: gemini-3.6-flash)
     if gemini_key:
         try:
             contents = [
@@ -80,7 +80,7 @@ def chat(payload: UserMessage):
                 contents.append({"role": role, "parts": [{"text": msg.get("text", "")}]})
             contents.append({"role": "user", "parts": [{"text": payload.message}]})
 
-            url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_key}"
+            url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key={gemini_key}"
             res = requests.post(url_gemini, headers={"Content-Type": "application/json"}, json={"contents": contents}, timeout=10)
             if res.status_code == 200:
                 bot_reply = res.json()['candidates'][0]['content']['parts'][0]['text']
