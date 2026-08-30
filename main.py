@@ -1,4 +1,5 @@
 import os
+import re
 import requests
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,8 +19,15 @@ class UserMessage(BaseModel):
     message: str
     history: list = []
 
+def clean_response(text: str) -> str:
+    """Remove as tags <think>...</think> dos modelos de raciocínio."""
+    if not text:
+        return ""
+    # Remove qualquer bloco entre <think> e </think>
+    cleaned = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
+    return cleaned.strip()
+
 def get_working_groq_models(groq_key: str):
-    """Consulta dinamicamente os modelos ativos da conta Groq."""
     if not groq_key:
         return []
     try:
@@ -36,7 +44,6 @@ def get_working_groq_models(groq_key: str):
     return ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
 
 def get_working_gemini_models(gemini_key: str):
-    """Consulta dinamicamente os modelos ativos do Google Gemini."""
     if not gemini_key:
         return []
     try:
@@ -76,11 +83,12 @@ def chat(payload: UserMessage):
     system_prompt = (
         "Você é o 'Aquele Abraço', um assistente empático de regulação emocional e acolhimento. "
         "Ouça o usuário com carinho, ajude-o a encontrar o autoperdão, a paz e a resiliência. "
-        "Responda de forma profunda, inédita e humana. Nunca repita frases robóticas ou fixas. "
+        "Responda de forma profunda, inédita e humana em português. Nunca repita frases robóticas ou fixas. "
+        "Nunca exiba etapas de raciocínio técnico nem tags de sistema. "
         "Nunca dê diagnósticos médicos nem receitas de remédios."
     )
 
-    # 1. TENTATIVA GROQ COM DESCOBERTA DINÂMICA
+    # 1. TENTATIVA GROQ
     if groq_key:
         groq_models = get_working_groq_models(groq_key)
         messages_groq = [{"role": "system", "content": system_prompt}]
@@ -101,18 +109,20 @@ def chat(payload: UserMessage):
                     "model": model_name,
                     "messages": messages_groq,
                     "temperature": 0.7,
-                    "max_tokens": 300
+                    "max_tokens": 400
                 }
                 res = requests.post(url_groq, headers=headers_groq, json=data_groq, timeout=12)
                 if res.status_code == 200:
-                    bot_reply = res.json()['choices'][0]['message']['content']
-                    return {"response": bot_reply}
+                    raw_reply = res.json()['choices'][0]['message']['content']
+                    final_reply = clean_response(raw_reply)
+                    if final_reply:
+                        return {"response": final_reply}
                 else:
                     print(f"[ERRO GROQ {model_name} - {res.status_code}]: {res.text}")
             except Exception as e:
                 print(f"[EXCEÇÃO GROQ {model_name}]: {e}")
 
-    # 2. TENTATIVA GEMINI COM DESCOBERTA DINÂMICA
+    # 2. TENTATIVA GEMINI
     if gemini_key:
         gemini_models = get_working_gemini_models(gemini_key)
         if "gemini-3.6-flash" not in gemini_models:
@@ -132,14 +142,15 @@ def chat(payload: UserMessage):
                 url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/{g_model}:generateContent?key={gemini_key}"
                 res = requests.post(url_gemini, headers={"Content-Type": "application/json"}, json={"contents": contents}, timeout=15)
                 if res.status_code == 200:
-                    bot_reply = res.json()['candidates'][0]['content']['parts'][0]['text']
-                    return {"response": bot_reply}
+                    raw_reply = res.json()['candidates'][0]['content']['parts'][0]['text']
+                    final_reply = clean_response(raw_reply)
+                    if final_reply:
+                        return {"response": final_reply}
                 else:
                     print(f"[ERRO GEMINI {g_model} - {res.status_code}]: {res.text}")
             except Exception as e:
                 print(f"[EXCEÇÃO GEMINI {g_model}]: {e}")
 
-    # 3. FALLBACK DE SEGURANÇA
     return {
-        "response": "Estou aqui escutando você. As chaves de inteligência em nuvem estão sendo sincronizadas no servidor, mas você pode continuar desabafando."
+        "response": "Estou aqui com você. Pode continuar desabafando no seu tempo."
     }
