@@ -4,6 +4,7 @@ import requests
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 
 app = FastAPI()
 
@@ -15,15 +16,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 1. ATUALIZAÇÃO DA ESTRUTURA PARA RECEBER ARQUIVOS
 class UserMessage(BaseModel):
     message: str
     history: list = []
+    media: Optional[str] = None
+    mimeType: Optional[str] = None
 
 def clean_response(text: str) -> str:
     """Remove as tags <think>...</think> dos modelos de raciocínio."""
     if not text:
         return ""
-    # Remove qualquer bloco entre <think> e </think>
     cleaned = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
     return cleaned.strip()
 
@@ -61,14 +64,14 @@ def get_working_gemini_models(gemini_key: str):
                 return models
     except Exception as e:
         print(f"[DISCOVERY GEMINI ERRO]: {e}")
-    return ["gemini-3.6-flash"]
+    return ["gemini-1.5-pro", "gemini-1.5-flash"] # Atualizado para modelos multimodais
 
 @app.get("/")
 def home():
     groq_key = os.getenv("GROQ_API_KEY", "").strip()
     gemini_key = os.getenv("GEMINI_API_KEY", "").strip()
     return {
-        "status": "Servidor do Aquele Abraço Ativo",
+        "status": "Servidor do Aquele Abraço Ativo (Suporte Multimodal)",
         "groq_key_detectada": bool(groq_key),
         "gemini_key_detectada": bool(gemini_key),
         "groq_modelos_disponiveis": get_working_groq_models(groq_key),
@@ -88,8 +91,10 @@ def chat(payload: UserMessage):
         "Nunca dê diagnósticos médicos nem receitas de remédios."
     )
 
-    # 1. TENTATIVA GROQ
-    if groq_key:
+    has_media = bool(payload.media and payload.mimeType)
+
+    # 2. ROTEAMENTO DE MÍDIA: O Groq atende apenas texto. Se tiver arquivo, pula pro Gemini.
+    if groq_key and not has_media:
         groq_models = get_working_groq_models(groq_key)
         messages_groq = [{"role": "system", "content": system_prompt}]
         for msg in payload.history[-6:]:
@@ -117,30 +122,44 @@ def chat(payload: UserMessage):
                     final_reply = clean_response(raw_reply)
                     if final_reply:
                         return {"response": final_reply}
-                else:
-                    print(f"[ERRO GROQ {model_name} - {res.status_code}]: {res.text}")
             except Exception as e:
                 print(f"[EXCEÇÃO GROQ {model_name}]: {e}")
 
-    # 2. TENTATIVA GEMINI
+    # 3. TENTATIVA GEMINI (Com suporte nativo a PDF, Vídeo e Imagem)
     if gemini_key:
         gemini_models = get_working_gemini_models(gemini_key)
-        if "gemini-3.6-flash" not in gemini_models:
-            gemini_models.insert(0, "gemini-3.6-flash")
+        # Prioriza o flash 1.5 que é excelente para leitura de arquivos rápidos
+        if "gemini-1.5-flash" not in gemini_models:
+            gemini_models.insert(0, "gemini-1.5-flash")
 
         contents = [
             {"role": "user", "parts": [{"text": f"Instrução: {system_prompt}"}]},
             {"role": "model", "parts": [{"text": "Compreendido."}]}
         ]
+        
         for msg in payload.history[-6:]:
             role = "user" if msg.get("sender") == "user" else "model"
             contents.append({"role": role, "parts": [{"text": msg.get("text", "")}]})
-        contents.append({"role": "user", "parts": [{"text": payload.message}]})
+        
+        # 4. MONTAGEM MULTIMODAL DA MENSAGEM ATUAL
+        current_message_parts = []
+        if has_media:
+            # Limpa o prefixo do Data URL (ex: 'data:application/pdf;base64,')
+            raw_b64 = payload.media.split(",")[1] if "," in payload.media else payload.media
+            current_message_parts.append({
+                "inlineData": {
+                    "mimeType": payload.mimeType,
+                    "data": raw_b64
+                }
+            })
+        
+        current_message_parts.append({"text": payload.message})
+        contents.append({"role": "user", "parts": current_message_parts})
 
         for g_model in gemini_models:
             try:
                 url_gemini = f"https://generativelanguage.googleapis.com/v1beta/models/{g_model}:generateContent?key={gemini_key}"
-                res = requests.post(url_gemini, headers={"Content-Type": "application/json"}, json={"contents": contents}, timeout=15)
+                res = requests.post(url_gemini, headers={"Content-Type": "application/json"}, json={"contents": contents}, timeout=25)
                 if res.status_code == 200:
                     raw_reply = res.json()['candidates'][0]['content']['parts'][0]['text']
                     final_reply = clean_response(raw_reply)
