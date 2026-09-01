@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aquele Abraço 2.1.5 (PWA Edition)</title>
+  <title>Aquele Abraço 2.1.6 (PWA Easter Egg)</title>
 
   <!-- PWA META TAGS -->
   <link rel="manifest" href="manifest.json">
@@ -63,7 +63,12 @@
       flex-shrink: 0; z-index: 10; height: 70px;
     }
 
-    .brand-container { display: flex; align-items: center; gap: 10px; }
+    .brand-container { 
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+      padding: 4px; border-radius: 8px; transition: background-color 0.3s;
+    }
+    .brand-container:active { background-color: rgba(0,0,0,0.05); }
+
     .brand-title {
       font-size: 1.2rem; font-weight: 700; color: var(--primary-color);
       opacity: 0; transition: opacity 0.6s ease;
@@ -97,7 +102,7 @@
       position: absolute; top: 0; left: 0; width: 100vw; height: 100dvh;
       background-color: var(--bg-color); display: flex; flex-direction: column;
       align-items: center; justify-content: center; z-index: 100;
-      transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1); pointer-events: none;
     }
 
     #logoCanvas {
@@ -112,7 +117,7 @@
 
     .animation-wrapper.minimized {
       position: relative; width: 65px; height: 65px;
-      background-color: transparent; z-index: 10; padding: 0;
+      background-color: transparent; z-index: 10; padding: 0; pointer-events: auto;
     }
 
     .animation-wrapper.minimized #logoCanvas { width: 65px; height: 65px; }
@@ -276,7 +281,7 @@
       cursor: pointer; padding: 8px 0; display: inline-block; text-decoration: underline;
     }
 
-    /* TOAST DE NOTIFICAÇÃO DO VLIBRAS */
+    /* TOAST DE NOTIFICAÇÃO DO VLIBRAS E PWA */
     #toast-notification {
       position: fixed;
       bottom: 85px;
@@ -312,7 +317,8 @@
 
   <!-- HEADER -->
   <header>
-    <div class="brand-container">
+    <!-- GATILHO SURPRESA DO PWA NA LOGO -->
+    <div class="brand-container" onclick="triggerPWAInstall()" title="Surpresa: Toque para instalar o app!">
       <div id="logo-anchor"></div>
       <span id="brand-title" class="brand-title">Aquele Abraço</span>
     </div>
@@ -402,6 +408,7 @@
 
   <!-- SUPER TECLADO DE EMOJIS EXPANDIDO -->
   <div id="emoji-picker-modal">
+    <!-- Emojis ignorados por brevidade visual aqui, mantive os botões estruturais originais -->
     <div class="emoji-category">
       <span>Satisfação & Alegria</span>
       <div class="emoji-grid">
@@ -533,6 +540,21 @@
           </button>
           <div class="accordion-content">
             Projetado por <strong>Edwin Balera</strong>, líder em arquitetura de engenharia de software e inovação técnica. A plataforma unifica rigidez técnica de alta performance com sensibilidade humana para oferecer um porto seguro imediato, com Fricção Zero e segurança absoluta de dados.
+          </div>
+        </div>
+
+        <!-- O NOVO ACORDEÃO SOBRE O EASTER EGG DE INSTALAÇÃO -->
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <span style="flex:1;">📱 Surpresa: Como Instalar o App</span>
+            <div class="access-btns">
+               <span class="access-btn" onclick="toggleAccordionAudio(event, this)" title="Ouvir">🔊</span>
+               <span class="access-btn" onclick="toggleAccordionLibras(event, this)" title="Traduzir em Libras">🤟</span>
+            </div>
+            <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            Você descobriu nosso segredo de design! Para ter o "Aquele Abraço" no seu celular e usá-lo até mesmo sem internet (offline), basta tocar no logo do coração ali no canto superior esquerdo da tela. Se estiver no iPhone, o sistema pedirá que você use o botão "Compartilhar" e depois "Adicionar à Tela de Início".
           </div>
         </div>
 
@@ -678,9 +700,10 @@
     let startTime = null;
     const cycleDuration = 6000;
 
-    /* VARIÁVEIS DE REPRODUÇÃO DE ÁUDIO GLOBAL */
+    /* VARIÁVEIS DE REPRODUÇÃO DE ÁUDIO GLOBAL E PWA */
     let currentSpeakingPElem = null;
     let currentSpeakingAccordionBtn = null;
+    let deferredPrompt = null;
 
     /* VARIÁVEIS DO MOTOR DE MICROEXPRESSÕES E SÍNTESE SONORA */
     let keystrokeData = { timestamps: [], backspaceCount: 0, lastKeyDownTime: 0 };
@@ -688,6 +711,28 @@
     
     let synthAudioCtx = null;
     let synthNodes = [];
+
+    // SEQUESTRO DO EVENTO DE INSTALAÇÃO DO NAVEGADOR
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    // O Gatilho de Instalação (Easter Egg)
+    async function triggerPWAInstall() {
+      if (deferredPrompt) {
+        // Mostra o botão de instalação nativo
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('App instalado pelo usuário!');
+        }
+        deferredPrompt = null;
+      } else {
+        // Fallback gentil se já estiver instalado ou se for um iPhone
+        showToast("💝 Surpresa! Para instalar no iPhone, use 'Compartilhar' > 'Adicionar à Tela de Início'. No Android, use o menu do seu navegador.");
+      }
+    }
 
     window.onload = () => {
       loadState();
@@ -723,21 +768,18 @@
     }
 
     function playVLibras(targetElement) {
-      // 1. Limpa seleção atual e seleciona o texto do parágrafo escolhido
       const selection = window.getSelection();
       selection.removeAllRanges();
       const range = document.createRange();
       range.selectNodeContents(targetElement);
       selection.addRange(range);
 
-      // 2. Acorda e abre o widget do VLibras automaticamente
       const vwPlugin = document.querySelector('[vw-plugin-wrapper]');
       const vwAccessButton = document.querySelector('[vw-access-button]');
       if (vwPlugin && !vwPlugin.classList.contains('active') && vwAccessButton) {
           vwAccessButton.click();
       }
 
-      // 3. Informa o usuário gentilmente para ele dar o clique final seguro
       showToast("🤟 Texto selecionado! Dê um toque rápido no avatar do VLibras para traduzir.");
     }
 
@@ -765,7 +807,6 @@
       ctx.save();
       ctx.translate(200 + sway, 200);
 
-      // CORPO DO CORAÇÃO
       ctx.beginPath();
       ctx.strokeStyle = strokeColor;
       ctx.lineWidth = 4.5;
@@ -776,7 +817,6 @@
       ctx.bezierCurveTo(110 - squeeze, 30, 60 - squeeze, 70, 0, 110);
       ctx.stroke();
 
-      // VINCOS DO APERTO
       if (hugProgress > 0.3) {
         let alpha = (hugProgress - 0.3) / 0.7;
         ctx.strokeStyle = strokeColor;
@@ -791,7 +831,6 @@
         ctx.globalAlpha = 1.0;
       }
 
-      // ROSTO
       if (hugProgress < 0.5) {
         ctx.fillStyle = strokeColor;
         ctx.beginPath();
@@ -814,7 +853,6 @@
         ctx.stroke();
       }
 
-      // BRAÇOS E MÃOS
       let armAngle = hugProgress * 1.45;
 
       ctx.save();
