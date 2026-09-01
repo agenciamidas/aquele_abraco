@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Aquele Abraço 2.1.5 (PWA Edition)</title>
+
+  <!-- PWA META TAGS -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#fbfbf9">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    :root {
+      --bg-color: #fbfbf9;
+      --card-bg: #ffffff;
+      --primary-color: #333333;
+      --text-color: #333333;
+      --border-color: #e5e5e0;
+      --border-radius: 16px;
+    }
+
+    body.theme-sepia {
+      --bg-color: #f4ecd8;
+      --card-bg: #fbf0d9;
+      --primary-color: #4a3b2c;
+      --text-color: #4a3b2c;
+      --border-color: #e2d1b3;
+    }
+
+    body.theme-dark {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --primary-color: #ffffff;
+      --text-color: #e0e0e0;
+      --border-color: #333333;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, sans-serif; }
+
+    html, body {
+      height: 100dvh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    body { display: flex; flex-direction: column; justify-content: space-between; }
+
+    #brightness-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
+      background-color: black; opacity: var(--screen-brightness, 0);
+      pointer-events: none; z-index: 999;
+    }
+
+    /* CABEÇALHO */
+    header {
+      padding: 8px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0; z-index: 10; height: 70px;
+    }
+
+    .brand-container { display: flex; align-items: center; gap: 10px; }
+    .brand-title {
+      font-size: 1.2rem; font-weight: 700; color: var(--primary-color);
+      opacity: 0; transition: opacity 0.6s ease;
+    }
+    .brand-title.visible { opacity: 1; }
+
+    .header-actions { display: flex; gap: 6px; align-items: center; }
+    .icon-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-color); padding: 4px; }
+
+    /* PAINEIS FLUTUANTES */
+    #light-panel, #voice-panel, #audio-panel {
+      display: none; position: absolute; top: 65px; right: 15px;
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      padding: 15px; border-radius: var(--border-radius);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 20;
+      flex-direction: column; gap: 10px; width: 270px;
+    }
+
+    .theme-options { display: flex; justify-content: space-between; }
+    .theme-btn { padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); cursor: pointer; font-size: 0.8rem; }
+
+    .panel-label { font-size: 0.8rem; font-weight: bold; color: var(--text-color); display: flex; justify-content: space-between; }
+    .panel-select { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 0.8rem; outline: none; }
+
+    .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 2px; }
+    .preset-btn { padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); cursor: pointer; font-size: 0.75rem; font-weight: 600; text-align: center; }
+    .preset-btn:hover { border-color: #6c5ce7; }
+
+    /* HERO ANIMATION CONTAINER */
+    .animation-wrapper {
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100dvh;
+      background-color: var(--bg-color); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; z-index: 100;
+      transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    #logoCanvas {
+      width: 260px; height: 260px;
+      transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .hero-caption {
+      font-size: 1.5rem; font-family: 'Georgia', serif; font-style: italic;
+      color: var(--primary-color); margin-top: -10px; transition: opacity 0.4s ease;
+    }
+
+    .animation-wrapper.minimized {
+      position: relative; width: 65px; height: 65px;
+      background-color: transparent; z-index: 10; padding: 0;
+    }
+
+    .animation-wrapper.minimized #logoCanvas { width: 65px; height: 65px; }
+    .animation-wrapper.minimized .hero-caption { display: none; }
+
+    /* CHAT E PARÁGRAFOS */
+    #chat-container {
+      flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+      opacity: 0; transition: opacity 0.6s ease 0.3s;
+    }
+    #chat-container.visible { opacity: 1; }
+
+    .message {
+      max-width: 85%; padding: 12px 16px; border-radius: var(--border-radius);
+      line-height: 1.45; font-size: 0.95rem; position: relative; transition: all 0.2s ease;
+    }
+    .message.user { align-self: flex-end; background-color: var(--primary-color); color: var(--bg-color); border-bottom-right-radius: 2px; }
+    .message.assistant {
+      align-self: flex-start; background-color: var(--card-bg);
+      border: 1px solid var(--border-color); border-bottom-left-radius: 2px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+
+    /* PARÁGRAFO INDIVIDUAL COM ACESSIBILIDADE SOB DEMANDA */
+    .paragraph-item {
+      margin: 0; padding: 6px 8px; border-radius: 8px; position: relative;
+      cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease;
+      border: 1px solid transparent; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+    }
+    .paragraph-item:hover {
+      background-color: rgba(0,0,0,0.03);
+    }
+    body.theme-dark .paragraph-item:hover {
+      background-color: rgba(255,255,255,0.05);
+    }
+    .paragraph-item.speaking {
+      background-color: rgba(108, 92, 231, 0.12);
+      border-color: #6c5ce7;
+    }
+
+    .paragraph-text { flex: 1; word-break: break-word; }
+
+    .access-btns {
+      display: flex; gap: 4px; align-items: center; margin-left: auto; flex-shrink: 0; margin-top: 2px;
+    }
+    .access-btn {
+      background: none; border: none; font-size: 1.1rem; cursor: pointer;
+      opacity: 0.75; transition: opacity 0.2s; padding: 2px 4px;
+    }
+    .access-btn:hover { opacity: 1; }
+
+    /* CONTROLES E INPUT */
+    .input-area {
+      background-color: var(--card-bg); padding: 10px 15px 15px;
+      border-top: 1px solid var(--border-color); flex-shrink: 0;
+      display: flex; flex-direction: column; gap: 8px; z-index: 10;
+    }
+
+    .controls-wrapper { display: flex; align-items: center; gap: 6px; width: 100%; }
+
+    textarea {
+      flex: 1; border: 1px solid var(--border-color); background-color: var(--bg-color);
+      color: var(--text-color); border-radius: 12px; padding: 10px 12px; resize: none;
+      height: 44px; outline: none; font-size: 0.95rem; transition: border-color 0.3s ease;
+    }
+
+    .action-btn {
+      background-color: var(--primary-color); color: var(--bg-color);
+      border: none; width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.05rem; cursor: pointer; flex-shrink: 0;
+    }
+
+    .voice-btn { background-color: #e17055; color: white; }
+    .voice-active { background-color: #2ed573 !important; }
+    #fileInput { display: none; }
+
+    /* SUPER TECLADO DE EMOJIS EXPANDIDO */
+    #emoji-picker-modal {
+      display: none; background: var(--card-bg); border-top: 1px solid var(--border-color);
+      padding: 12px; max-height: 240px; overflow-y: auto; flex-direction: column; gap: 10px; flex-shrink: 0;
+    }
+
+    .emoji-category { display: flex; flex-direction: column; gap: 4px; }
+    .emoji-category span { font-size: 0.75rem; color: #888; font-weight: 600; }
+    .emoji-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .emoji-item { background: none; border: none; font-size: 1.35rem; cursor: pointer; }
+
+    /* MODAIS GERAIS */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
+      background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center;
+      z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+    .modal-card {
+      background-color: var(--card-bg); width: 90%; max-width: 480px; max-height: 85dvh;
+      border-radius: var(--border-radius); border: 1px solid var(--border-color);
+      display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.15); overflow: hidden;
+    }
+
+    .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+    .modal-title { font-size: 1.1rem; font-weight: 700; }
+    .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-color); }
+    .modal-body { padding: 15px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+    /* ACORDEÃO COM ÁUDIO E VLIBRAS */
+    .accordion-item { border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background-color: var(--bg-color); transition: background-color 0.3s, border-color 0.3s; }
+    .accordion-item.speaking { border-color: #6c5ce7; background-color: rgba(108, 92, 231, 0.05); }
+    .accordion-header {
+      width: 100%; padding: 12px 14px; text-align: left; background: none; border: none;
+      font-size: 0.9rem; font-weight: 600; color: var(--text-color); cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .accordion-icon { transition: transform 0.3s ease; }
+    .accordion-item.open .accordion-icon { transform: rotate(180deg); }
+    .accordion-content {
+      max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease;
+      font-size: 0.85rem; line-height: 1.5; color: var(--text-color); opacity: 0.9;
+    }
+    .accordion-item.open .accordion-content { max-height: 280px; padding: 0 14px 12px; }
+
+    /* ARTETERAPIA CANVAS */
+    #canvas-modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
+      background-color: var(--bg-color); z-index: 100; flex-direction: column;
+    }
+    .canvas-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid var(--border-color); }
+    canvas { flex: 1; touch-action: none; cursor: crosshair; }
+    .canvas-tools { padding: 10px; background: var(--card-bg); display: flex; gap: 8px; justify-content: center; }
+    .tool-btn { padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-color); color: var(--text-color); cursor: pointer; }
+
+    /* BACKUP MODAL */
+    #backup-modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
+      background: rgba(0,0,0,0.5); z-index: 101; align-items: center; justify-content: center;
+    }
+    .backup-card {
+      background: var(--card-bg); color: var(--text-color); padding: 20px;
+      border-radius: var(--border-radius); width: 90%; max-width: 380px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .backup-card button, .backup-card label {
+      padding: 10px; background: var(--primary-color); color: var(--bg-color);
+      border: none; border-radius: 8px; text-align: center; cursor: pointer;
+    }
+    #importFile { display: none; }
+
+    /* MODO ESCUDO - TELA DE DISFARCE */
+    #panic-screen {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
+      background-color: #ffffff; color: #5f6368; font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
+      z-index: 9999; padding: 40px 20px; box-sizing: border-box; flex-direction: column; justify-content: center; align-items: flex-start;
+    }
+    .panic-content { max-width: 450px; margin: 0 auto; }
+    .panic-icon { font-size: 48px; color: #5f6368; margin-bottom: 20px; }
+    .panic-h1 { font-size: 1.3rem; color: #202124; margin-bottom: 12px; font-weight: 500; }
+    .panic-p { font-size: 0.9rem; line-height: 1.5; color: #5f6368; margin-bottom: 20px; }
+    .panic-code {
+      font-size: 0.75rem; color: #70757a; font-family: monospace;
+      cursor: pointer; padding: 8px 0; display: inline-block; text-decoration: underline;
+    }
+
+    /* TOAST DE NOTIFICAÇÃO DO VLIBRAS */
+    #toast-notification {
+      position: fixed;
+      bottom: 85px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary-color);
+      color: var(--bg-color);
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      text-align: center;
+      width: 90%;
+      max-width: 350px;
+    }
+    #toast-notification.show {
+      opacity: 1;
+    }
+  </style>
+
+  <!-- VLIBRAS INTEGRATION -->
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+</head>
+<body>
+
+  <div id="brightness-overlay"></div>
+  <div id="toast-notification"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand-container">
+      <div id="logo-anchor"></div>
+      <span id="brand-title" class="brand-title">Aquele Abraço</span>
+    </div>
+
+    <div class="header-actions">
+      <button class="icon-btn" onclick="triggerPanicLock()" title="Modo Escudo (Tranca Rápida)">🛡️</button>
+      <button class="icon-btn" onclick="toggleModal(true)" title="Como Funciona & Bastidores">❓</button>
+      <button class="icon-btn" onclick="toggleAudioPanel()" title="Frequências Terapêuticas">🎧</button>
+      <button class="icon-btn" onclick="toggleVoicePanel()" title="Ajustes da Voz Realista">🗣️</button>
+      <button class="icon-btn" onclick="toggleLightPanel()" title="Luz & Tema">💡</button>
+      <button class="icon-btn" onclick="toggleBackupModal()" title="Configurações e Backup">⚙️</button>
+    </div>
+
+    <!-- PAINEL DE CONTROLE DE VOZ DA IA COM PRESETS HUMANOS -->
+    <div id="voice-panel">
+      <span style="font-size:0.9rem; font-weight:bold; border-bottom:1px solid var(--border-color); padding-bottom:4px;">Ajustes de Voz Realista</span>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
+        <div>
+          <span class="panel-label">Voz Humana do Sistema</span>
+          <select id="voiceSelect" class="panel-select" onchange="updateVoiceSettings()"></select>
+        </div>
+
+        <div>
+          <span class="panel-label">Estilos Emocionais Predefinidos</span>
+          <div class="preset-grid">
+            <button class="preset-btn" onclick="applyVoicePreset('acolhedora')">🤗 Acolhedora</button>
+            <button class="preset-btn" onclick="applyVoicePreset('serena')">🧘 Serena</button>
+            <button class="preset-btn" onclick="applyVoicePreset('energique')">⚡ Enérgica</button>
+            <button class="preset-btn" onclick="applyVoicePreset('natural')">🍃 Natural</button>
+          </div>
+        </div>
+
+        <div>
+          <span class="panel-label">Tom / Afinação <span id="pitchVal">1.0</span></span>
+          <input type="range" id="voicePitch" min="0.5" max="1.5" step="0.05" value="1.0" style="width:100%" oninput="updateVoiceSettings()">
+        </div>
+        <div>
+          <span class="panel-label">Velocidade <span id="rateVal">0.95</span></span>
+          <input type="range" id="voiceRate" min="0.5" max="1.5" step="0.05" value="0.95" style="width:100%" oninput="updateVoiceSettings()">
+        </div>
+        <div>
+          <span class="panel-label">Volume <span id="volVal">100%</span></span>
+          <input type="range" id="voiceVolume" min="0" max="1.0" step="0.1" value="1.0" style="width:100%" oninput="updateVoiceSettings()">
+        </div>
+
+        <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+          <input type="checkbox" id="autoAdvanceCheck" checked onchange="updateVoiceSettings()">
+          <label for="autoAdvanceCheck" style="font-size:0.75rem; font-weight:600; cursor:pointer;">Avanço Automático entre Parágrafos</label>
+        </div>
+
+        <button class="theme-btn" style="background:var(--primary-color); color:var(--bg-color); margin-top:4px; padding:8px;" onclick="testVoiceSettings()">🔊 Testar Voz Selecionada</button>
+      </div>
+    </div>
+
+    <!-- PAINEL DE ÁUDIO TERAPÊUTICO -->
+    <div id="audio-panel">
+      <span style="font-size:0.9rem; font-weight:bold; border-bottom:1px solid var(--border-color); padding-bottom:4px;">Frequências Terapêuticas</span>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
+        <button class="theme-btn" onclick="playAcoustic('chuva')">🌧️ Som de Chuva (Offline)</button>
+        <button class="theme-btn" onclick="playAcoustic('binaural')">🌊 Binaural 432Hz (Offline)</button>
+        <button class="theme-btn" onclick="playAcoustic('mindfulness')">🧘‍♂️ Rádio Mindfulness</button>
+        <button class="theme-btn" style="background:#e17055; color:white;" onclick="stopAcoustic()">⏹️ Parar Som</button>
+      </div>
+      <audio id="ambientPlayer" loop style="display:none;"></audio>
+    </div>
+
+    <!-- PAINEL DE TEMAS E LUZ -->
+    <div id="light-panel">
+      <span style="font-size:0.8rem; font-weight:bold;">Modo de Visão</span>
+      <div class="theme-options">
+        <button class="theme-btn" onclick="setTheme('light')">☀️ Claro</button>
+        <button class="theme-btn" onclick="setTheme('sepia')">📜 Sépia</button>
+        <button class="theme-btn" onclick="setTheme('dark')">🌙 Escuro</button>
+      </div>
+      <span style="font-size:0.8rem; font-weight:bold; margin-top:5px;">Reduzir Brilho</span>
+      <input type="range" min="0" max="0.7" step="0.05" value="0" oninput="setBrightness(this.value)">
+    </div>
+  </header>
+
+  <!-- ANIMAÇÃO CENTRAL (HERO) -->
+  <div id="hero-wrapper" class="animation-wrapper">
+    <canvas id="logoCanvas" width="400" height="400"></canvas>
+    <span class="hero-caption">Aquele Abraço</span>
+  </div>
+
+  <main id="chat-container"></main>
+
+  <!-- SUPER TECLADO DE EMOJIS EXPANDIDO -->
+  <div id="emoji-picker-modal">
+    <div class="emoji-category">
+      <span>Satisfação & Alegria</span>
+      <div class="emoji-grid">
+        <button class="emoji-item" onclick="sendEmoji('😊')">😊</button>
+        <button class="emoji-item" onclick="sendEmoji('😄')">😄</button>
+        <button class="emoji-item" onclick="sendEmoji('😁')">😁</button>
+        <button class="emoji-item" onclick="sendEmoji('😌')">😌</button>
+        <button class="emoji-item" onclick="sendEmoji('🥳')">🥳</button>
+        <button class="emoji-item" onclick="sendEmoji('✨')">✨</button>
+        <button class="emoji-item" onclick="sendEmoji('🌸')">🌸</button>
+        <button class="emoji-item" onclick="sendEmoji('☀️')">☀️</button>
+      </div>
+    </div>
+    <div class="emoji-category">
+      <span>Paixão & Amor Platônico</span>
+      <div class="emoji-grid">
+        <button class="emoji-item" onclick="sendEmoji('🥰')">🥰</button>
+        <button class="emoji-item" onclick="sendEmoji('❤️')">❤️</button>
+        <button class="emoji-item" onclick="sendEmoji('💖')">💖</button>
+        <button class="emoji-item" onclick="sendEmoji('💘')">💘</button>
+        <button class="emoji-item" onclick="sendEmoji('🤍')">🤍</button>
+        <button class="emoji-item" onclick="sendEmoji('💌')">💌</button>
+        <button class="emoji-item" onclick="sendEmoji('😻')">😻</button>
+        <button class="emoji-item" onclick="sendEmoji('🫂')">🫂</button>
+      </div>
+    </div>
+    <div class="emoji-category">
+      <span>Tempestade & Caos Interno</span>
+      <div class="emoji-grid">
+        <button class="emoji-item" onclick="sendEmoji('⛈️')">⛈️</button>
+        <button class="emoji-item" onclick="sendEmoji('🌩️')">🌩️</button>
+        <button class="emoji-item" onclick="sendEmoji('🌊')">🌊</button>
+        <button class="emoji-item" onclick="sendEmoji('🌪️')">🌪️</button>
+        <button class="emoji-item" onclick="sendEmoji('💥')">💥</button>
+      </div>
+    </div>
+    <div class="emoji-category">
+      <span>Tristeza / Luto / Desespero / Solidão</span>
+      <div class="emoji-grid">
+        <button class="emoji-item" onclick="sendEmoji('😭')">😭</button>
+        <button class="emoji-item" onclick="sendEmoji('💔')">💔</button>
+        <button class="emoji-item" onclick="sendEmoji('🥀')">🥀</button>
+        <button class="emoji-item" onclick="sendEmoji('🕳️')">🕳️</button>
+        <button class="emoji-item" onclick="sendEmoji('🌧️')">🌧️</button>
+        <button class="emoji-item" onclick="sendEmoji('🥺')">🥺</button>
+      </div>
+    </div>
+    <div class="emoji-category">
+      <span>Pânico / Sobrecarga / Raiva</span>
+      <div class="emoji-grid">
+        <button class="emoji-item" onclick="sendEmoji('🤯')">🤯</button>
+        <button class="emoji-item" onclick="sendEmoji('🫨')">🫨</button>
+        <button class="emoji-item" onclick="sendEmoji('🤬')">🤬</button>
+        <button class="emoji-item" onclick="sendEmoji('🩹')">🩹</button>
+        <button class="emoji-item" onclick="sendEmoji('🆘')">🆘</button>
+      </div>
+    </div>
+    <div class="emoji-category">
+      <span>Busca de Paz / Cura</span>
+      <div class="emoji-grid">
+        <button class="emoji-item" onclick="sendEmoji('🌱')">🌱</button>
+        <button class="emoji-item" onclick="sendEmoji('🕊️')">🕊️</button>
+        <button class="emoji-item" onclick="sendEmoji('🕯️')">🕯️</button>
+        <button class="emoji-item" onclick="sendEmoji('⚓')">⚓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT CONTROLS -->
+  <div class="input-area">
+    <div class="controls-wrapper">
+      <button class="action-btn" style="background:#6c5ce7; color:white;" onclick="toggleEmojiPicker()" title="Escolher Emoji">😊</button>
+      <button class="action-btn" style="background:#fdcb6e; color:#2d3436;" onclick="openCanvas()" title="Arteterapia">🎨</button>
+      <button class="action-btn" id="camBtn" style="background:#e84393; color:white;" onclick="openCameraModal()" title="Câmera / Vídeo Sinais">📷</button>
+      <label for="fileInput" class="action-btn" style="background:#74b9ff; color:white;" title="Anexar Arquivo">📎</label>
+      <input type="file" id="fileInput" accept="image/*,audio/*,.pdf" onchange="handleFileUpload(event)">
+      
+      <textarea id="userInput" placeholder="Sua voz ou seu texto..."></textarea>
+      
+      <button class="action-btn voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Voz">🎙️</button>
+      <button class="action-btn" onclick="sendMessage()" title="Enviar">➔</button>
+    </div>
+  </div>
+
+  <!-- MODAL CÂMERA LIBRAS -->
+  <div id="camera-modal" class="modal-overlay">
+    <div class="modal-card" style="align-items:center; text-align:center;">
+      <div class="modal-header" style="width:100%;">
+        <span class="modal-title">Gravação de Sinais / Gestos</span>
+        <button class="close-btn" onclick="closeCameraModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="width:100%; align-items:center;">
+        <video id="webcam-preview" autoplay playsinline style="width:100%; max-height:250px; border-radius:12px; background:#000;"></video>
+        <p style="font-size:0.8rem; color:#666; margin-top:8px;">Expresse-se em qualquer língua de sinais. Escolha o tempo de gravação:</p>
+        
+        <div style="display:flex; gap:8px; justify-content:center; margin-top:8px; width:100%;">
+          <select id="videoDuration" class="panel-select" style="width:auto; min-width:100px;">
+            <option value="3500">3.5 Segundos</option>
+            <option value="5000">5 Segundos</option>
+            <option value="10000">10 Segundos</option>
+            <option value="15000">15 Segundos</option>
+          </select>
+        </div>
+
+        <button id="captureLibrasBtn" onclick="captureSignLanguage()" style="margin-top:12px; padding:10px 20px; background:var(--primary-color); color:var(--bg-color); border:none; border-radius:8px; cursor:pointer; font-weight:600;">
+          Gravar Comunicação
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL COMO FUNCIONA & BASTIDORES DO FUNDADOR -->
+  <div id="tutorial-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Guia de Acolhimento & Bastidores</span>
+        <button class="close-btn" onclick="toggleModal(false)">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <span style="flex:1;">🏛️ Bastidores do Abraço (Fundador)</span>
+            <div class="access-btns">
+               <span class="access-btn" onclick="toggleAccordionAudio(event, this)" title="Ouvir">🔊</span>
+               <span class="access-btn" onclick="toggleAccordionLibras(event, this)" title="Traduzir em Libras">🤟</span>
+            </div>
+            <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            Projetado por <strong>Edwin Balera</strong>, líder em arquitetura de engenharia de software e inovação técnica. A plataforma unifica rigidez técnica de alta performance com sensibilidade humana para oferecer um porto seguro imediato, com Fricção Zero e segurança absoluta de dados.
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <span style="flex:1;">🗣️ Vozes & Avanço Automático</span>
+            <div class="access-btns">
+               <span class="access-btn" onclick="toggleAccordionAudio(event, this)" title="Ouvir">🔊</span>
+               <span class="access-btn" onclick="toggleAccordionLibras(event, this)" title="Traduzir em Libras">🤟</span>
+            </div>
+            <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            A leitura de voz é dividida por parágrafo com avanço automático. Personalize com vozes neurais e estilos emocionais (Acolhedora, Serena, Enérgica) pelo ícone de voz no cabeçalho.
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <span style="flex:1;">🎧 Frequências Terapêuticas Livres</span>
+            <div class="access-btns">
+               <span class="access-btn" onclick="toggleAccordionAudio(event, this)" title="Ouvir">🔊</span>
+               <span class="access-btn" onclick="toggleAccordionLibras(event, this)" title="Traduzir em Libras">🤟</span>
+            </div>
+            <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            Acesse o painel para reproduzir sons de ancoragem durante uma crise. O "Som de Chuva" e o "Binaural 432Hz" são sintetizados matematicamente pelo próprio celular (funcionam offline), e a rádio Mindfulness toca um fluxo contínuo sem anúncios.
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <span style="flex:1;">🤟 Inclusão Sinais, Libras e Arquivos</span>
+            <div class="access-btns">
+               <span class="access-btn" onclick="toggleAccordionAudio(event, this)" title="Ouvir">🔊</span>
+               <span class="access-btn" onclick="toggleAccordionLibras(event, this)" title="Traduzir em Libras">🤟</span>
+            </div>
+            <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            Comunicação natural em qualquer Língua de Sinais gravada por vídeo, com seletor de tempo de gravação. O sistema interpreta o idioma gestual e responde em Português. Você tem o controle: toque no botão 🤟 ao lado de qualquer texto, o sistema irá selecionar o parágrafo automaticamente. Depois, é só tocar no Avatar VLibras para ele sinalizar o texto de forma nativa e segura.
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <span style="flex:1;">🎨 Arteterapia e Emojis</span>
+            <div class="access-btns">
+               <span class="access-btn" onclick="toggleAccordionAudio(event, this)" title="Ouvir">🔊</span>
+               <span class="access-btn" onclick="toggleAccordionLibras(event, this)" title="Traduzir em Libras">🤟</span>
+            </div>
+            <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            Espaço de desenho livre (caneta, spray e borracha) e um vasto catálogo de emojis categorizados de satisfação, paixão, caos interno e busca de paz.
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <span style="flex:1;">🛡️ Modo Escudo & Biometria</span>
+            <div class="access-btns">
+               <span class="access-btn" onclick="toggleAccordionAudio(event, this)" title="Ouvir">🔊</span>
+               <span class="access-btn" onclick="toggleAccordionLibras(event, this)" title="Traduzir em Libras">🤟</span>
+            </div>
+            <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            Soberania de dados local. O botão de escudo tranca o app, realiza backup silencioso e projeta uma tela de erro do sistema. O motor analisa microexpressões do teclado e do vídeo.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARTETERAPIA CANVAS -->
+  <div id="canvas-modal">
+    <div class="canvas-header">
+      <span>Espaço de Expressão Livre</span>
+      <button class="tool-btn" onclick="closeCanvas()">Concluir</button>
+    </div>
+    <canvas id="artCanvas"></canvas>
+    <div class="canvas-tools">
+      <button class="tool-btn" onclick="setTool('pen')">✏️ Caneta</button>
+      <button class="tool-btn" onclick="setTool('spray')">🎨 Spray</button>
+      <button class="tool-btn" onclick="setTool('eraser')">🧽 Borracha</button>
+      <input type="color" id="colorPicker" value="#2d3436" onchange="setColor(this.value)">
+      <button class="tool-btn" onclick="clearCanvas()">🗑️ Limpar</button>
+    </div>
+  </div>
+
+  <!-- BACKUP MODAL -->
+  <div id="backup-modal">
+    <div class="backup-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>Soberania & Privacidade</h3>
+        <div class="access-btns">
+          <button class="access-btn" onclick="readGenericText('Soberania e Privacidade. Guarde seu registro criptografado no seu aparelho com total segurança.', this)">🔊</button>
+          <button class="access-btn" onclick="playVLibras(document.getElementById('backup-desc'))">🤟</button>
+        </div>
+      </div>
+      <p id="backup-desc" style="font-size: 0.8rem; color: #888; margin-top:5px;">Soberania e Privacidade. Guarde seu registro criptografado no seu aparelho com total segurança.</p>
+      <button onclick="exportBackup()">Exportar Registro Criptografado</button>
+      <label for="importFile">Restaurar Registro</label>
+      <input type="file" id="importFile" onchange="importBackup(event)">
+      <button onclick="toggleBackupModal()" style="background:#ccc; color:#333;">Fechar</button>
+    </div>
+  </div>
+
+  <!-- DISFARCE DO MODO ESCUDO -->
+  <div id="panic-screen">
+    <div class="panic-content">
+      <div class="panic-icon">⚠️</div>
+      <div class="panic-h1">Esta página não está funcionando</div>
+      <div class="panic-p">A página solicitada não pode ser carregada no momento. É possível que ela esteja temporariamente indisponível ou tenha sido movida para um novo endereço web.</div>
+      <div class="panic-code" onclick="triggerEmergencyDial()" title="Toque para suporte de emergência">
+        ERR_INTERNET_DISCONNECTED
+      </div>
+    </div>
+  </div>
+
+  <!-- DIV DO COMPONENTE VLIBRAS -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BACKEND_URL = "https://aquele-abraco.onrender.com/api/chat";
+    const SECURE_HEADER = "ECLIA_ABRACO_SECURE_KEY_V1";
+    let state = { session_history: [], internal_header: SECURE_HEADER, voiceSettings: { voiceIndex: 0, pitch: 1.0, rate: 0.95, volume: 1.0, autoAdvance: true } };
+
+    const canvas = document.getElementById('logoCanvas');
+    const ctx = canvas.getContext('2d');
+    const heroWrapper = document.getElementById('hero-wrapper');
+    const logoAnchor = document.getElementById('logo-anchor');
+    const brandTitle = document.getElementById('brand-title');
+    const chatContainer = document.getElementById('chat-container');
+
+    let startTime = null;
+    const cycleDuration = 6000;
+
+    /* VARIÁVEIS DE REPRODUÇÃO DE ÁUDIO GLOBAL */
+    let currentSpeakingPElem = null;
+    let currentSpeakingAccordionBtn = null;
+
+    /* VARIÁVEIS DO MOTOR DE MICROEXPRESSÕES E SÍNTESE SONORA */
+    let keystrokeData = { timestamps: [], backspaceCount: 0, lastKeyDownTime: 0 };
+    let currentEmotionalState = "ESTÁVEL";
+    
+    let synthAudioCtx = null;
+    let synthNodes = [];
+
+    window.onload = () => {
+      loadState();
+      initCanvas();
+      initVoices();
+      initVLibras();
+      initMicroExpressionEngine();
+
+      setTimeout(() => {
+        logoAnchor.appendChild(heroWrapper);
+        heroWrapper.classList.add('minimized');
+        brandTitle.classList.add('visible');
+        chatContainer.classList.add('visible');
+      }, cycleDuration);
+
+      requestAnimationFrame(animateLogo);
+    };
+
+    function initVLibras() {
+      if (typeof window.VLibras !== 'undefined') {
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+      }
+    }
+
+    /* TOAST DE NOTIFICAÇÃO E UX ASSISTIDA DO VLIBRAS */
+    function showToast(message) {
+      const toast = document.getElementById('toast-notification');
+      toast.innerText = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4500);
+    }
+
+    function playVLibras(targetElement) {
+      // 1. Limpa seleção atual e seleciona o texto do parágrafo escolhido
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      const range = document.createRange();
+      range.selectNodeContents(targetElement);
+      selection.addRange(range);
+
+      // 2. Acorda e abre o widget do VLibras automaticamente
+      const vwPlugin = document.querySelector('[vw-plugin-wrapper]');
+      const vwAccessButton = document.querySelector('[vw-access-button]');
+      if (vwPlugin && !vwPlugin.classList.contains('active') && vwAccessButton) {
+          vwAccessButton.click();
+      }
+
+      // 3. Informa o usuário gentilmente para ele dar o clique final seguro
+      showToast("🤟 Texto selecionado! Dê um toque rápido no avatar do VLibras para traduzir.");
+    }
+
+    /* ANIMAÇÃO CANVAS 2D DO CORAÇÃO A LÁPIS */
+    function animateLogo(timestamp) {
+      if (!startTime) startTime = timestamp;
+      let progress = (timestamp - startTime) % cycleDuration;
+      let t = progress / cycleDuration;
+
+      let hugProgress = 0;
+      if (t > 0.4 && t <= 0.6) {
+        hugProgress = (t - 0.4) / 0.2;
+      } else if (t > 0.6 && t <= 0.9) {
+        hugProgress = 1;
+      } else if (t > 0.9) {
+        hugProgress = 1 - (t - 0.9) / 0.1;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let strokeColor = getComputedStyle(document.body).getPropertyValue('--primary-color').trim();
+
+      let squeeze = hugProgress * 18;
+      let sway = Math.sin(t * Math.PI * 2) * (hugProgress * 4);
+
+      ctx.save();
+      ctx.translate(200 + sway, 200);
+
+      // CORPO DO CORAÇÃO
+      ctx.beginPath();
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = 4.5;
+      ctx.moveTo(0, 110);
+      ctx.bezierCurveTo(-60 + squeeze, 70, -110 + squeeze, 30, -110 + squeeze, -30);
+      ctx.bezierCurveTo(-110 + squeeze, -80, -40, -100, 0, -40);
+      ctx.bezierCurveTo(40, -100, 110 - squeeze, -80, 110 - squeeze, -30);
+      ctx.bezierCurveTo(110 - squeeze, 30, 60 - squeeze, 70, 0, 110);
+      ctx.stroke();
+
+      // VINCOS DO APERTO
+      if (hugProgress > 0.3) {
+        let alpha = (hugProgress - 0.3) / 0.7;
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 2.5;
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        ctx.moveTo(-95 + squeeze, 10);
+        ctx.quadraticCurveTo(-85 + squeeze, 20, -90 + squeeze, 30);
+        ctx.moveTo(95 - squeeze, 10);
+        ctx.quadraticCurveTo(85 - squeeze, 20, 90 - squeeze, 30);
+        ctx.stroke();
+        ctx.globalAlpha = 1.0;
+      }
+
+      // ROSTO
+      if (hugProgress < 0.5) {
+        ctx.fillStyle = strokeColor;
+        ctx.beginPath();
+        ctx.arc(-35, -25, 4.5, 0, Math.PI * 2);
+        ctx.arc(35, -25, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.lineWidth = 3.5;
+        ctx.arc(0, 5, 25, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+      } else {
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.arc(-35, -30, 12, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.moveTo(47, -30);
+        ctx.arc(35, -30, 12, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, 10, 18, 0.15 * Math.PI, 0.85 * Math.PI);
+        ctx.stroke();
+      }
+
+      // BRAÇOS E MÃOS
+      let armAngle = hugProgress * 1.45;
+
+      ctx.save();
+      ctx.translate(-95 + squeeze, 0);
+      ctx.rotate(armAngle);
+      ctx.beginPath();
+      ctx.lineWidth = 4;
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(20, 40, 60, 60, 110, 45);
+      ctx.stroke();
+      if (hugProgress > 0.6) {
+        ctx.beginPath(); ctx.lineWidth = 2.5;
+        ctx.moveTo(110, 45); ctx.lineTo(125, 38);
+        ctx.moveTo(110, 45); ctx.lineTo(128, 43);
+        ctx.moveTo(110, 45); ctx.lineTo(127, 49);
+        ctx.moveTo(110, 45); ctx.lineTo(123, 54);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      ctx.save();
+      ctx.translate(95 - squeeze, 0);
+      ctx.rotate(-armAngle);
+      ctx.beginPath();
+      ctx.lineWidth = 4;
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(-20, 40, -60, 60, -110, 45);
+      ctx.stroke();
+      if (hugProgress > 0.6) {
+        ctx.beginPath(); ctx.lineWidth = 2.5;
+        ctx.moveTo(-110, 45); ctx.lineTo(-125, 38);
+        ctx.moveTo(-110, 45); ctx.lineTo(-128, 43);
+        ctx.moveTo(-110, 45); ctx.lineTo(-127, 49);
+        ctx.moveTo(-110, 45); ctx.lineTo(-123, 54);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      ctx.restore();
+      requestAnimationFrame(animateLogo);
+    }
+
+    /* MODO ESCUDO */
+    function triggerPanicLock() {
+      exportBackupSilent();
+      document.getElementById('panic-screen').style.display = 'flex';
+    }
+
+    function triggerEmergencyDial() {
+      window.location.href = 'tel:190';
+    }
+
+    function exportBackupSilent() {
+      const dataStr = JSON.stringify(state);
+      const encrypted = btoa(unescape(encodeURIComponent(dataStr)));
+      const blob = new Blob([encrypted], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'registro_seguro.dat'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    /* GRAVAÇÃO DE VÍDEO REAL EM SINAIS VIA MEDIARECORDER */
+    let cameraStream = null;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+
+    async function openCameraModal() {
+      const modal = document.getElementById('camera-modal');
+      const video = document.getElementById('webcam-preview');
+      modal.classList.add('active');
+
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } }, 
+          audio: false 
+        });
+        video.srcObject = cameraStream;
+      } catch (err) {
+        alert("Não foi possível acessar a câmera para captação de vídeo.");
+        closeCameraModal();
+      }
+    }
+
+    function closeCameraModal() {
+      const modal = document.getElementById('camera-modal');
+      modal.classList.remove('active');
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+    }
+
+    function captureSignLanguage() {
+      if (!cameraStream) return;
+
+      const durationSelect = document.getElementById('videoDuration');
+      const recordTimeMs = parseInt(durationSelect.value) || 3500;
+      const recordTimeSec = (recordTimeMs / 1000).toFixed(1);
+
+      recordedChunks = [];
+      const btn = document.getElementById('captureLibrasBtn');
+      btn.innerText = `Gravando sinais (${recordTimeSec}s)...`;
+      btn.disabled = true;
+      durationSelect.disabled = true;
+
+      try {
+        mediaRecorder = new MediaRecorder(cameraStream, { mimeType: 'video/webm' });
+      } catch (e) {
+        mediaRecorder = new MediaRecorder(cameraStream);
+      }
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) recordedChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          const videoBase64 = reader.result;
+          closeCameraModal();
+          btn.innerText = "Gravar Comunicação";
+          btn.disabled = false;
+          durationSelect.disabled = false;
+
+          appendMessage(`[Sinalização em vídeo enviada - ${recordTimeSec}s]`, 'user');
+          
+          const hiddenContext = `[MANDATÓRIO: O usuário enviou um vídeo de ${recordTimeSec}s. TAREFA: 1) Analise os gestos e a emoção facial. 2) Compreenda a mensagem. 3) Responda DIRETAMENTE ao usuário. 4) Você está PROIBIDO de criar relatórios ou usar inglês. 5) SUA RESPOSTA DEVE SER EXCLUSIVAMENTE UM OBJETO JSON VÁLIDO no formato: {"portugues": "Sua resposta empática aqui", "glosa": "ESTRUTURA EM LIBRAS AQUI", "detected_libras": true}]`;
+          
+          processUserMessage(hiddenContext, videoBase64, "video/webm");
+        };
+      };
+
+      mediaRecorder.start();
+
+      setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+          mediaRecorder.stop();
+        }
+      }, recordTimeMs);
+    }
+
+    /* MOTOR DE ANÁLISE DE MICROEXPRESSÕES (TECLADO) */
+    function initMicroExpressionEngine() {
+      const inputElem = document.getElementById('userInput');
+      if (!inputElem) return;
+
+      inputElem.addEventListener('keydown', (e) => {
+        const now = Date.now();
+        if (e.key === 'Backspace') {
+          keystrokeData.backspaceCount++;
+        }
+        if (keystrokeData.lastKeyDownTime > 0) {
+          const flightTime = now - keystrokeData.lastKeyDownTime;
+          keystrokeData.timestamps.push(flightTime);
+          if (keystrokeData.timestamps.length > 12) keystrokeData.timestamps.shift();
+        }
+        keystrokeData.lastKeyDownTime = now;
+      });
+
+      inputElem.addEventListener('input', (e) => {
+        const text = e.target.value.toLowerCase();
+        let avgFlightTime = 0;
+        if (keystrokeData.timestamps.length > 0) {
+          avgFlightTime = keystrokeData.timestamps.reduce((a, b) => a + b, 0) / keystrokeData.timestamps.length;
+        }
+
+        const emergencyKeywords = ["socorro", "me ajuda", "nao aguento", "não aguento", "desespero", "panico", "pânico"];
+        const hasEmergencyWord = emergencyKeywords.some(word => text.includes(word));
+
+        if (hasEmergencyWord || (avgFlightTime > 0 && avgFlightTime < 55) || keystrokeData.backspaceCount > 10) {
+          currentEmotionalState = "ALERTA_PÂNICO";
+          inputElem.style.borderColor = "#e17055";
+        } else {
+          currentEmotionalState = "ESTÁVEL";
+          inputElem.style.borderColor = "var(--border-color)";
+        }
+      });
+    }
+
+    /* PAINEL E SISTEMA DE VOZ DA IA */
+    function toggleVoicePanel() {
+      const panel = document.getElementById('voice-panel');
+      document.getElementById('light-panel').style.display = 'none';
+      document.getElementById('audio-panel').style.display = 'none';
+      panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+      populateVoices();
+    }
+
+    function populateVoices() {
+      if (!('speechSynthesis' in window)) return;
+      const select = document.getElementById('voiceSelect');
+      if (!select) return;
+
+      const voices = window.speechSynthesis.getVoices();
+      select.innerHTML = '';
+
+      const ptVoices = voices.filter(v => v.lang.includes('pt') || v.lang.includes('PT'));
+      const otherVoices = voices.filter(v => !v.lang.includes('pt') && !v.lang.includes('PT'));
+
+      if (ptVoices.length > 0) {
+        const groupPt = document.createElement('optgroup');
+        groupPt.label = "✨ Vozes em Português (Recomendadas)";
+        ptVoices.forEach(v => {
+          const idx = voices.indexOf(v);
+          const opt = document.createElement('option');
+          opt.value = idx;
+          const isNeural = v.name.includes("Google") || v.name.includes("Natural") || v.name.includes("Neural") || v.name.includes("Microsoft");
+          opt.textContent = `${isNeural ? "🤖✨ " : "🎙️ "}${v.name} (${v.lang})`;
+          groupPt.appendChild(opt);
+        });
+        select.appendChild(groupPt);
+
+        const groupOther = document.createElement('optgroup');
+        groupOther.label = "Outras Vozes";
+        otherVoices.forEach(v => {
+          const idx = voices.indexOf(v);
+          const opt = document.createElement('option');
+          opt.value = idx;
+          opt.textContent = `${v.name} (${v.lang})`;
+          groupOther.appendChild(opt);
+        });
+        select.appendChild(groupOther);
+      } else {
+        voices.forEach((v, idx) => {
+          const opt = document.createElement('option');
+          opt.value = idx;
+          opt.textContent = `${v.name} (${v.lang})`;
+          select.appendChild(opt);
+        });
+      }
+
+      if (state.voiceSettings && state.voiceSettings.voiceIndex !== undefined && voices[state.voiceSettings.voiceIndex]) {
+        select.value = state.voiceSettings.voiceIndex;
+      }
+    }
+
+    function applyVoicePreset(presetName) {
+      const pitchInput = document.getElementById('voicePitch');
+      const rateInput = document.getElementById('voiceRate');
+
+      if (presetName === 'acolhedora') { pitchInput.value = 0.95; rateInput.value = 0.85; }
+      else if (presetName === 'serena') { pitchInput.value = 0.85; rateInput.value = 0.75; }
+      else if (presetName === 'energique') { pitchInput.value = 1.15; rateInput.value = 1.05; }
+      else if (presetName === 'natural') { pitchInput.value = 1.0; rateInput.value = 0.95; }
+      updateVoiceSettings();
+    }
+
+    function updateVoiceSettings() {
+      const select = document.getElementById('voiceSelect');
+      const pitch = document.getElementById('voicePitch');
+      const rate = document.getElementById('voiceRate');
+      const volume = document.getElementById('voiceVolume');
+      const autoCheck = document.getElementById('autoAdvanceCheck');
+
+      state.voiceSettings = {
+        voiceIndex: parseInt(select.value) || 0,
+        pitch: parseFloat(pitch.value) || 1.0,
+        rate: parseFloat(rate.value) || 0.95,
+        volume: parseFloat(volume.value) || 1.0,
+        autoAdvance: autoCheck ? autoCheck.checked : true
+      };
+
+      document.getElementById('pitchVal').innerText = state.voiceSettings.pitch;
+      document.getElementById('rateVal').innerText = state.voiceSettings.rate;
+      document.getElementById('volVal').innerText = Math.round(state.voiceSettings.volume * 100) + '%';
+      saveState();
+    }
+
+    function testVoiceSettings() {
+      updateVoiceSettings();
+      window.speechSynthesis.cancel();
+      resetAudioState();
+
+      const utterance = new SpeechSynthesisUtterance("Este é um teste da voz humanizada e acolhedora do Aquele Abraço.");
+      utterance.lang = 'pt-BR';
+      const voices = window.speechSynthesis.getVoices();
+      if (voices[state.voiceSettings.voiceIndex]) {
+        utterance.voice = voices[state.voiceSettings.voiceIndex];
+      }
+      utterance.pitch = state.voiceSettings.pitch;
+      utterance.rate = state.voiceSettings.rate;
+      utterance.volume = state.voiceSettings.volume;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    /* LUZ E TEMAS */
+    function toggleLightPanel() {
+      const panel = document.getElementById('light-panel');
+      document.getElementById('voice-panel').style.display = 'none';
+      document.getElementById('audio-panel').style.display = 'none';
+      panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+    }
+    function setTheme(theme) {
+      document.body.className = '';
+      if (theme !== 'light') document.body.classList.add(`theme-${theme}`);
+    }
+    function setBrightness(val) {
+      document.documentElement.style.setProperty('--screen-brightness', val);
+    }
+    
+    /* PAINEL DE FREQUÊNCIAS TERAPÊUTICAS */
+    function toggleAudioPanel() {
+      const panel = document.getElementById('audio-panel');
+      document.getElementById('light-panel').style.display = 'none';
+      document.getElementById('voice-panel').style.display = 'none';
+      panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function initSynthAudio() {
+      if (!synthAudioCtx) synthAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (synthAudioCtx.state === 'suspended') synthAudioCtx.resume();
+    }
+
+    function stopSyntheticAudio() {
+      synthNodes.forEach(node => { try { node.stop(); } catch(e) {} });
+      synthNodes = [];
+    }
+
+    function createPinkNoise() {
+      const bufferSize = 2 * synthAudioCtx.sampleRate;
+      const noiseBuffer = synthAudioCtx.createBuffer(1, bufferSize, synthAudioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      let b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
+      for (let i = 0; i < bufferSize; i++) {
+        let white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+        output[i] *= 0.11;
+        b6 = white * 0.115926;
+      }
+      return noiseBuffer;
+    }
+
+    function playRain() {
+      initSynthAudio();
+      stopSyntheticAudio();
+      const noiseSource = synthAudioCtx.createBufferSource();
+      noiseSource.buffer = createPinkNoise();
+      noiseSource.loop = true;
+      const filter = synthAudioCtx.createBiquadFilter();
+      filter.type = 'lowpass'; filter.frequency.value = 1000;
+      const gain = synthAudioCtx.createGain(); gain.gain.value = 0.5;
+      noiseSource.connect(filter); filter.connect(gain); gain.connect(synthAudioCtx.destination);
+      noiseSource.start(); synthNodes.push(noiseSource);
+    }
+
+    function playBinaural() {
+      initSynthAudio();
+      stopSyntheticAudio();
+      const oscL = synthAudioCtx.createOscillator(); oscL.type = 'sine'; oscL.frequency.value = 432;
+      const oscR = synthAudioCtx.createOscillator(); oscR.type = 'sine'; oscR.frequency.value = 436;
+      const panL = synthAudioCtx.createStereoPanner ? synthAudioCtx.createStereoPanner() : synthAudioCtx.createPanner();
+      if(panL.pan) panL.pan.value = -1; else panL.setPosition(-1, 0, 0);
+      const panR = synthAudioCtx.createStereoPanner ? synthAudioCtx.createStereoPanner() : synthAudioCtx.createPanner();
+      if(panR.pan) panR.pan.value = 1; else panR.setPosition(1, 0, 0);
+      const gain = synthAudioCtx.createGain(); gain.gain.value = 0.15;
+      oscL.connect(panL); oscR.connect(panR); panL.connect(gain); panR.connect(gain); gain.connect(synthAudioCtx.destination);
+      oscL.start(); oscR.start(); synthNodes.push(oscL, oscR);
+    }
+
+    function playAcoustic(track) {
+      const player = document.getElementById('ambientPlayer');
+      player.pause(); stopSyntheticAudio();
+      if (track === 'chuva') playRain();
+      else if (track === 'binaural') playBinaural();
+      else if (track === 'mindfulness') {
+        player.src = 'https://ice1.somafm.com/dronezone-128-mp3';
+        player.volume = 0.2; player.play().catch(e => console.log("Áudio bloqueado."));
+      }
+    }
+
+    function stopAcoustic() {
+      const player = document.getElementById('ambientPlayer');
+      player.pause(); stopSyntheticAudio();
+    }
+
+    /* ACESSIBILIDADE DE ÁUDIO E LIBRAS GENÉRICA */
+    function resetAudioState() {
+      document.querySelectorAll('.paragraph-item').forEach(p => p.classList.remove('speaking'));
+      document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('speaking'));
+      document.querySelectorAll('.access-btn').forEach(b => { if(b.innerText === '⏹️') b.innerText = '🔊'; });
+      currentSpeakingPElem = null; currentSpeakingAccordionBtn = null;
+    }
+
+    function readGenericText(text, btnElem) {
+      if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada.");
+      if (window.speechSynthesis.speaking && btnElem.innerText === '⏹️') {
+        window.speechSynthesis.cancel(); resetAudioState(); return;
+      }
+      window.speechSynthesis.cancel(); resetAudioState();
+      
+      const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'pt-BR';
+      const voices = window.speechSynthesis.getVoices();
+      if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) {
+        utterance.voice = voices[state.voiceSettings.voiceIndex];
+        utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0);
+        utterance.rate = parseFloat(state.voiceSettings.rate || 0.95);
+        utterance.volume = parseFloat(state.voiceSettings.volume || 1.0);
+      } else utterance.rate = 0.95;
+      
+      utterance.onend = () => resetAudioState(); utterance.onerror = () => resetAudioState();
+      btnElem.innerText = '⏹️';
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function toggleAccordionAudio(event, btnElem) {
+      event.stopPropagation();
+      const accordionItem = btnElem.closest('.accordion-item');
+      const textToRead = accordionItem.querySelector('.accordion-content').innerText;
+      if (!accordionItem.classList.contains('open')) {
+        document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+        accordionItem.classList.add('open');
+      }
+      readGenericText(textToRead, btnElem);
+      accordionItem.classList.add('speaking');
+    }
+
+    function toggleAccordionLibras(event, btnElem) {
+      event.stopPropagation();
+      const accordionItem = btnElem.closest('.accordion-item');
+      const contentNode = accordionItem.querySelector('.accordion-content');
+      if (!accordionItem.classList.contains('open')) {
+        document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+        accordionItem.classList.add('open');
+      }
+      playVLibras(contentNode);
+    }
+
+    function toggleAudioForParagraph(pText, pElem, btnElem) {
+      if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada.");
+      if (currentSpeakingPElem === pElem && window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel(); resetAudioState(); return;
+      }
+      window.speechSynthesis.cancel(); resetAudioState();
+      const utterance = new SpeechSynthesisUtterance(pText); utterance.lang = 'pt-BR';
+      const voices = window.speechSynthesis.getVoices();
+      if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) {
+        utterance.voice = voices[state.voiceSettings.voiceIndex];
+        utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0);
+        utterance.rate = parseFloat(state.voiceSettings.rate || 0.95);
+        utterance.volume = parseFloat(state.voiceSettings.volume || 1.0);
+      } else utterance.rate = 0.95;
+      
+      utterance.onend = () => {
+        pElem.classList.remove('speaking'); if (btnElem) btnElem.innerText = '🔊'; currentSpeakingPElem = null;
+        const autoAdvance = state.voiceSettings ? state.voiceSettings.autoAdvance : true;
+        if (autoAdvance) {
+          const parentMsg = pElem.closest('.message');
+          if (parentMsg) {
+            const paragraphs = Array.from(parentMsg.querySelectorAll('.paragraph-item'));
+            const currentIndex = paragraphs.indexOf(pElem);
+            if (currentIndex !== -1 && currentIndex < paragraphs.length - 1) {
+              const nextPElem = paragraphs[currentIndex + 1];
+              const nextBtnElems = nextPElem.querySelectorAll('.access-btn');
+              let nextBtnElem = null;
+              nextBtnElems.forEach(b => { if(b.innerText === '🔊') nextBtnElem = b; });
+              const nextText = nextPElem.querySelector('.paragraph-text').innerText;
+              setTimeout(() => { toggleAudioForParagraph(nextText, nextPElem, nextBtnElem); }, 250); 
+            }
+          }
+        }
+      };
+      utterance.onerror = () => resetAudioState();
+      pElem.classList.add('speaking'); if (btnElem) btnElem.innerText = '⏹️'; currentSpeakingPElem = pElem;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    /* UPLOAD DE ARQUIVOS */
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      appendMessage(`[Anexo Enviado: ${file.name}]`, 'user');
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const fileBase64 = reader.result;
+        processUserMessage(`Acabei de anexar um arquivo chamado "${file.name}". Por favor, verifique o conteúdo dele e responda apropriadamente.`, fileBase64, file.type);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* CHAT E PROCESSAMENTO JSON/MULTIMODAL BLINDADO */
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const text = input.value.trim();
+      if (!text) return;
+      appendMessage(text, 'user');
+      input.value = '';
+      processUserMessage(text);
+    }
+
+    async function processUserMessage(userText, mediaPayload = null, mimeType = null) {
+      const typingId = appendTypingIndicator();
+
+      let finalPrompt = userText;
+      if (currentEmotionalState === "ALERTA_PÂNICO" && userText) {
+        finalPrompt = `[Aviso Biométrico: Pânico/Ansiedade Elevada] ${userText}`;
+      }
+
+      try {
+        const payload = { message: finalPrompt, history: state.session_history };
+        if (mediaPayload) { payload.media = mediaPayload; payload.mimeType = mimeType || "video/webm"; }
+
+        const response = await fetch(API_BACKEND_URL, {
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+        });
+
+        removeTypingIndicator(typingId);
+        keystrokeData.backspaceCount = 0; keystrokeData.timestamps = [];
+
+        if (response.ok) {
+          const data = await response.json();
+          let rawText = data.response || "";
+          let cleanText = rawText;
+          let glosaText = "";
+
+          // EXTRATOR JSON BLINDADO E COM GLOSA
+          const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+              try {
+                  const parsed = JSON.parse(jsonMatch[0]);
+                  if (parsed.portugues) {
+                      cleanText = parsed.portugues;
+                      if (parsed.glosa) glosaText = parsed.glosa;
+                  }
+              } catch(e) { console.log("JSON Parcial:", e) }
+          }
+
+          // EXTERMINADOR DE VAZAMENTOS TÉCNICOS (CoT/Rascunho)
+          cleanText = cleanText.replace(/<think>[\s\S]*?<\/think>/gi, '');
+          cleanText = cleanText.replace(/^(?:\*|-|\d+\.).*$/gm, ''); 
+          cleanText = cleanText.replace(/^(?:Task|Role|Constraints|Draft|Portuguese|LIBRAS Gloss|User input|System Instruction|Persona|Context|Message|Facial expression|Emotional state|Analysis|Attempt \d+|\[.*?\]|```.*):?.*/gmi, '');
+          cleanText = cleanText.replace(/\n{2,}/g, '\n\n').trim();
+
+          if (!cleanText) {
+             cleanText = "Eu estou te vendo e percebo cada detalhe dos seus gestos. Este é o seu espaço, sinta-se seguro e acolhido.";
+          }
+
+          let finalDisplay = cleanText;
+          if (glosaText) finalDisplay += `\n\n🤟 [Glosa]: ${glosaText}`;
+
+          appendMessage(finalDisplay, 'assistant');
+
+        } else {
+          appendMessage("Estou aqui com você. Como posso te apoiar agora?", 'assistant');
+        }
+      } catch (error) {
+        removeTypingIndicator(typingId);
+        appendMessage("Estou aqui com você. Como posso te ajudar neste momento?", 'assistant');
+      }
+    }
+
+    function appendTypingIndicator() {
+      const container = document.getElementById('chat-container');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message assistant';
+      msgDiv.id = 'typing-indicator';
+      msgDiv.innerText = 'Pensando com carinho...';
+      container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
+      return 'typing-indicator';
+    }
+
+    function removeTypingIndicator(id) {
+      const elem = document.getElementById(id); if (elem) elem.remove();
+    }
+
+    function appendMessage(text, sender, save = true) {
+      const container = document.getElementById('chat-container');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${sender}`;
+
+      if (sender === 'assistant') {
+        const paragraphs = text.split(/\n+/).map(p => p.trim()).filter(p => p.length > 0);
+        if (paragraphs.length === 0) paragraphs.push(text);
+
+        paragraphs.forEach((pText) => {
+          const pElem = document.createElement('div'); pElem.className = 'paragraph-item';
+          const textSpan = document.createElement('span'); textSpan.className = 'paragraph-text'; textSpan.innerText = pText;
+          
+          // CONJUNTO DE BOTÕES DE ACESSIBILIDADE
+          const btnContainer = document.createElement('div'); btnContainer.className = 'access-btns';
+
+          const audioBtn = document.createElement('button'); audioBtn.className = 'access-btn'; audioBtn.innerText = '🔊'; audioBtn.title = 'Ouvir / Parar Parágrafo';
+          audioBtn.onclick = (e) => { e.stopPropagation(); toggleAudioForParagraph(pText, pElem, audioBtn); };
+
+          const librasBtn = document.createElement('button'); librasBtn.className = 'access-btn'; librasBtn.innerText = '🤟'; librasBtn.title = 'Traduzir em Libras';
+          librasBtn.onclick = (e) => { e.stopPropagation(); playVLibras(textSpan); };
+
+          btnContainer.appendChild(audioBtn);
+          btnContainer.appendChild(librasBtn);
+
+          pElem.appendChild(textSpan);
+          pElem.appendChild(btnContainer);
+          msgDiv.appendChild(pElem);
+        });
+      } else {
+        msgDiv.innerText = text;
+      }
+      container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
+      if (save) { state.session_history.push({ text, sender }); saveState(); }
+    }
+
+    function saveState() { localStorage.setItem('aquele_abraco_state', JSON.stringify(state)); }
+    function loadState() {
+      const saved = localStorage.getItem('aquele_abraco_state');
+      if (saved) {
+        try { const parsed = JSON.parse(saved); state = { ...state, ...parsed }; renderHistory(); } catch (e) {}
+      } else renderHistory();
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('chat-container'); container.innerHTML = '';
+      appendMessage("Estou aqui com você. Como está seu coração hoje?", 'assistant', false);
+      state.session_history.forEach(msg => appendMessage(msg.text, msg.sender, false));
+    }
+
+    /* RECONHECIMENTO DE VOZ */
+    function initVoices() { if ('speechSynthesis' in window) window.speechSynthesis.onvoiceschanged = () => populateVoices(); }
+    let isListening = false, recognition;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new Speech(); recognition.lang = 'pt-BR';
+      recognition.onresult = (e) => { document.getElementById('userInput').value = e.results[0][0].transcript; toggleVoice(); };
+      recognition.onerror = () => toggleVoice();
+    }
+
+    function toggleVoice() {
+      const btn = document.getElementById('voiceBtn');
+      if (!recognition) return alert('Reconhecimento indisponível.');
+      if (!isListening) { try { recognition.start(); isListening = true; btn.classList.add('voice-active'); } catch(e) {} }
+      else { recognition.stop(); isListening = false; btn.classList.remove('voice-active'); }
+    }
+
+    /* INTERFACE: EMOJIS E ARTETERAPIA */
+    function toggleModal(show) { const modal = document.getElementById('tutorial-modal'); show ? modal.classList.add('active') : modal.classList.remove('active'); }
+    function toggleAccordion(button) {
+      const item = button.parentElement; const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+    function toggleEmojiPicker() { const picker = document.getElementById('emoji-picker-modal'); picker.style.display = picker.style.display === 'flex' ? 'none' : 'flex'; }
+    function sendEmoji(emoji) { toggleEmojiPicker(); appendMessage(emoji, 'user'); processUserMessage(emoji); }
+    
+    let artCanvas, artCtx, drawing = false, currentTool = 'pen', strokeColor = '#2d3436';
+    function initCanvas() {
+      artCanvas = document.getElementById('artCanvas'); artCtx = artCanvas.getContext('2d');
+      artCanvas.addEventListener('mousedown', startDraw); artCanvas.addEventListener('mousemove', draw); artCanvas.addEventListener('mouseup', stopDraw);
+      artCanvas.addEventListener('touchstart', startDraw); artCanvas.addEventListener('touchmove', draw); artCanvas.addEventListener('touchend', stopDraw);
+    }
+    function openCanvas() { document.getElementById('canvas-modal').style.display = 'flex'; artCanvas.width = window.innerWidth; artCanvas.height = window.innerHeight - 110; }
+    function closeCanvas() { document.getElementById('canvas-modal').style.display = 'none'; appendMessage("[Expressão Visual Compartilhada]", 'user'); processUserMessage("Compartilhei um desenho expressando como me sinto."); }
+    function setTool(tool) { currentTool = tool; } function setColor(color) { strokeColor = color; } function clearCanvas() { artCtx.clearRect(0, 0, artCanvas.width, artCanvas.height); }
+    function startDraw(e) { drawing = true; draw(e); } function stopDraw() { drawing = false; artCtx.beginPath(); }
+    function draw(e) {
+      if (!drawing) return;
+      const rect = artCanvas.getBoundingClientRect(); const x = (e.clientX || e.touches[0].clientX) - rect.left; const y = (e.clientY || e.touches[0].clientY) - rect.top;
+      artCtx.lineWidth = currentTool === 'eraser' ? 25 : 3; artCtx.lineCap = 'round'; artCtx.strokeStyle = currentTool === 'eraser' ? getComputedStyle(document.body).getPropertyValue('--bg-color').trim() : strokeColor;
+      if (currentTool === 'spray') { for (let i = 0; i < 10; i++) { artCtx.fillStyle = strokeColor; artCtx.fillRect(x + (Math.random() - 0.5) * 18, y + (Math.random() - 0.5) * 18, 1.5, 1.5); } } 
+      else { artCtx.lineTo(x, y); artCtx.stroke(); artCtx.beginPath(); artCtx.moveTo(x, y); }
+    }
+
+    /* BACKUP */
+    function toggleBackupModal() { const modal = document.getElementById('backup-modal'); modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex'; }
+    function exportBackup() {
+      const dataStr = JSON.stringify(state); const encrypted = btoa(unescape(encodeURIComponent(dataStr))); const blob = new Blob([encrypted], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'registro_pessoal.dat'; a.click(); URL.revokeObjectURL(url);
+    }
+    function importBackup(e) {
+      const file = e.target.files[0]; if (!file) return; const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const decrypted = decodeURIComponent(escape(atob(evt.target.result))); const imported = JSON.parse(decrypted);
+          if (imported.internal_header === SECURE_HEADER) { state = { ...state, ...imported }; saveState(); renderHistory(); alert('Registro restaurado com sucesso!'); toggleBackupModal(); } 
+          else alert('Arquivo inválido.');
+        } catch (err) { alert('Erro ao ler arquivo.'); }
+      }; reader.readAsText(file);
+    }
+  </script>
+
+  <!-- ATIVADOR DO PWA (OFFLINE) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then((reg) => console.log('PWA: Service Worker registrado com sucesso!', reg.scope))
+          .catch((err) => console.log('PWA: Falha ao registrar Service Worker:', err));
+      });
+    }
+  </script>
+</body>
+</html>
