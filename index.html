@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aquele Abraço 4.1 (Temporal Grounding Edition)</title>
+  <title>Aquele Abraço 4.3 (Clean UI & Docs Edition)</title>
 
   <!-- PWA META TAGS -->
   <link rel="manifest" href="manifest.json">
@@ -54,7 +54,7 @@
       pointer-events: none; z-index: 999;
     }
 
-    /* CABEÇALHO */
+    /* CABEÇALHO LIMPO (Apenas 3 botões essenciais) */
     header {
       padding: 8px 16px;
       display: flex; align-items: center; justify-content: space-between;
@@ -81,26 +81,17 @@
     .badge-offline { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
     .badge-ai-local { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
 
-    .header-actions { display: flex; gap: 6px; align-items: center; }
-    .icon-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-color); padding: 4px; }
-
-    /* PAINEIS FLUTUANTES */
-    #light-panel, #voice-panel, #audio-panel {
-      display: none; position: absolute; top: 65px; right: 15px;
-      background: var(--card-bg); border: 1px solid var(--border-color);
-      padding: 15px; border-radius: var(--border-radius);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 20;
-      flex-direction: column; gap: 10px; width: 270px;
-    }
+    .header-actions { display: flex; gap: 12px; align-items: center; } /* Gap maior para evitar toques errados */
+    .icon-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-color); padding: 4px; }
 
     .theme-options { display: flex; justify-content: space-between; }
-    .theme-btn { padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); cursor: pointer; font-size: 0.8rem; }
+    .theme-btn { padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); cursor: pointer; font-size: 0.85rem; width: 100%; text-align: center; margin-bottom: 6px; font-weight: 600;}
 
-    .panel-label { font-size: 0.8rem; font-weight: bold; color: var(--text-color); display: flex; justify-content: space-between; }
-    .panel-select { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 0.8rem; outline: none; }
+    .panel-label { font-size: 0.85rem; font-weight: bold; color: var(--text-color); display: flex; justify-content: space-between; margin-bottom: 4px;}
+    .panel-select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 0.85rem; outline: none; margin-bottom: 10px;}
 
-    .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 2px; }
-    .preset-btn { padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); cursor: pointer; font-size: 0.75rem; font-weight: 600; text-align: center; }
+    .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+    .preset-btn { padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); cursor: pointer; font-size: 0.8rem; font-weight: 600; text-align: center; }
     .preset-btn:hover { border-color: #6c5ce7; }
 
     /* HERO ANIMATION CONTAINER */
@@ -111,21 +102,9 @@
       transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1); pointer-events: none;
     }
 
-    #logoCanvas {
-      width: 260px; height: 260px;
-      transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    .hero-caption {
-      font-size: 1.5rem; font-family: 'Georgia', serif; font-style: italic;
-      color: var(--primary-color); margin-top: -10px; transition: opacity 0.4s ease;
-    }
-
-    .animation-wrapper.minimized {
-      position: relative; width: 65px; height: 65px;
-      background-color: transparent; z-index: 10; padding: 0; pointer-events: auto;
-    }
-
+    #logoCanvas { width: 260px; height: 260px; transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1); }
+    .hero-caption { font-size: 1.5rem; font-family: 'Georgia', serif; font-style: italic; color: var(--primary-color); margin-top: -10px; transition: opacity 0.4s ease; }
+    .animation-wrapper.minimized { position: relative; width: 65px; height: 65px; background-color: transparent; z-index: 10; padding: 0; pointer-events: auto; }
     .animation-wrapper.minimized #logoCanvas { width: 65px; height: 65px; }
     .animation-wrapper.minimized .hero-caption { display: none; }
 
@@ -136,22 +115,11 @@
     }
     #chat-container.visible { opacity: 1; }
 
-    .message {
-      max-width: 85%; padding: 12px 16px; border-radius: var(--border-radius);
-      line-height: 1.45; font-size: 0.95rem; position: relative; transition: all 0.2s ease;
-    }
+    .message { max-width: 85%; padding: 12px 16px; border-radius: var(--border-radius); line-height: 1.45; font-size: 0.95rem; position: relative; transition: all 0.2s ease; }
     .message.user { align-self: flex-end; background-color: var(--primary-color); color: var(--bg-color); border-bottom-right-radius: 2px; }
-    .message.assistant {
-      align-self: flex-start; background-color: var(--card-bg);
-      border: 1px solid var(--border-color); border-bottom-left-radius: 2px;
-      display: flex; flex-direction: column; gap: 6px;
-    }
+    .message.assistant { align-self: flex-start; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom-left-radius: 2px; display: flex; flex-direction: column; gap: 6px; }
 
-    .paragraph-item {
-      margin: 0; padding: 6px 8px; border-radius: 8px; position: relative;
-      cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease;
-      border: 1px solid transparent; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; flex-wrap: wrap;
-    }
+    .paragraph-item { margin: 0; padding: 6px 8px; border-radius: 8px; position: relative; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease; border: 1px solid transparent; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
     .paragraph-item:hover { background-color: rgba(0,0,0,0.03); }
     body.theme-dark .paragraph-item:hover { background-color: rgba(255,255,255,0.05); }
     .paragraph-item.speaking { background-color: rgba(108, 92, 231, 0.12); border-color: #6c5ce7; }
@@ -161,145 +129,63 @@
     .access-btn { background: none; border: none; font-size: 1.1rem; cursor: pointer; opacity: 0.75; transition: opacity 0.2s; padding: 2px 4px; }
     .access-btn:hover { opacity: 1; }
 
-    /* BALÃO DE GLOSA INLINE */
-    .glosa-box {
-      background-color: rgba(108, 92, 231, 0.08);
-      border-left: 3px solid #6c5ce7;
-      padding: 8px 10px;
-      margin-top: 6px;
-      font-family: monospace;
-      font-size: 0.85rem;
-      color: var(--text-color);
-      border-radius: 0 4px 4px 0;
-      display: none;
-      width: 100%;
-      word-break: break-word;
-      font-weight: bold;
-    }
+    .glosa-box { background-color: rgba(108, 92, 231, 0.08); border-left: 3px solid #6c5ce7; padding: 8px 10px; margin-top: 6px; font-family: monospace; font-size: 0.85rem; color: var(--text-color); border-radius: 0 4px 4px 0; display: none; width: 100%; word-break: break-word; font-weight: bold; }
     .glosa-box.visible { display: block; }
 
-    /* BOTÕES INLINE DO CBT OFFLINE */
     .cbt-inline-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; width: 100%; border-top: 1px dotted var(--border-color); padding-top: 8px; }
     .cbt-inline-btn { padding: 10px; border: 1px solid var(--primary-color); border-radius: 8px; background: var(--bg-color); color: var(--text-color); font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s; display: flex; align-items: center; gap: 8px;}
     .cbt-inline-btn:active { background: rgba(0,0,0,0.05); transform: scale(0.98); }
 
     /* CONTROLES E INPUT */
-    .input-area {
-      background-color: var(--card-bg); padding: 10px 15px 15px;
-      border-top: 1px solid var(--border-color); flex-shrink: 0;
-      display: flex; flex-direction: column; gap: 8px; z-index: 10;
-    }
+    .input-area { background-color: var(--card-bg); padding: 10px 15px 15px; border-top: 1px solid var(--border-color); flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; z-index: 10; }
     .controls-wrapper { display: flex; align-items: center; gap: 6px; width: 100%; }
-
-    textarea {
-      flex: 1; border: 1px solid var(--border-color); background-color: var(--bg-color);
-      color: var(--text-color); border-radius: 12px; padding: 10px 12px; resize: none;
-      height: 44px; outline: none; font-size: 0.95rem; transition: border-color 0.3s ease;
-    }
-
-    .action-btn {
-      background-color: var(--primary-color); color: var(--bg-color);
-      border: none; width: 40px; height: 40px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.05rem; cursor: pointer; flex-shrink: 0;
-    }
-
+    textarea { flex: 1; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); border-radius: 12px; padding: 10px 12px; resize: none; height: 44px; outline: none; font-size: 0.95rem; transition: border-color 0.3s ease; }
+    .action-btn { background-color: var(--primary-color); color: var(--bg-color); border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; cursor: pointer; flex-shrink: 0; }
     .voice-btn { background-color: #e17055; color: white; }
     .voice-active { background-color: #2ed573 !important; }
     #fileInput { display: none; }
 
     /* SUPER TECLADO DE EMOJIS EXPANDIDO */
-    #emoji-picker-modal {
-      display: none; background: var(--card-bg); border-top: 1px solid var(--border-color);
-      padding: 12px; max-height: 240px; overflow-y: auto; flex-direction: column; gap: 10px; flex-shrink: 0;
-    }
+    #emoji-picker-modal { display: none; background: var(--card-bg); border-top: 1px solid var(--border-color); padding: 12px; max-height: 240px; overflow-y: auto; flex-direction: column; gap: 10px; flex-shrink: 0; }
     .emoji-category { display: flex; flex-direction: column; gap: 4px; }
     .emoji-category span { font-size: 0.75rem; color: #888; font-weight: 600; }
     .emoji-grid { display: flex; flex-wrap: wrap; gap: 8px; }
     .emoji-item { background: none; border: none; font-size: 1.35rem; cursor: pointer; }
 
-    /* MODAIS GERAIS */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-      background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center;
-      z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-    }
+    /* MODAIS GERAIS (UX Nativa Mobile) */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
-
-    .modal-card {
-      background-color: var(--card-bg); width: 90%; max-width: 480px; max-height: 85dvh;
-      border-radius: var(--border-radius); border: 1px solid var(--border-color);
-      display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.15); overflow: hidden;
-    }
-
+    .modal-card { background-color: var(--card-bg); width: 90%; max-width: 480px; max-height: 85dvh; border-radius: var(--border-radius); border: 1px solid var(--border-color); display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.15); overflow: hidden; }
     .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
     .modal-title { font-size: 1.1rem; font-weight: 700; }
-    .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-color); }
+    .close-btn { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: var(--text-color); }
     .modal-body { padding: 15px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
 
-    /* ACORDEÃO COM ÁUDIO E VLIBRAS */
+    /* ACORDEÕES DO MENU CENTRAL */
     .accordion-item { border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background-color: var(--bg-color); transition: background-color 0.3s, border-color 0.3s; }
-    .accordion-item.speaking { border-color: #6c5ce7; background-color: rgba(108, 92, 231, 0.05); }
-    .accordion-header {
-      width: 100%; padding: 12px 14px; text-align: left; background: none; border: none;
-      font-size: 0.9rem; font-weight: 600; color: var(--text-color); cursor: pointer;
-      display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    }
+    .accordion-header { width: 100%; padding: 14px; text-align: left; background: none; border: none; font-size: 0.95rem; font-weight: 600; color: var(--text-color); cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .accordion-icon { transition: transform 0.3s ease; }
     .accordion-item.open .accordion-icon { transform: rotate(180deg); }
-    .accordion-content {
-      max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease;
-      font-size: 0.85rem; line-height: 1.5; color: var(--text-color); opacity: 0.9;
-    }
-    .accordion-item.open .accordion-content { max-height: 480px; padding: 0 14px 12px; }
+    .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; font-size: 0.85rem; line-height: 1.5; color: var(--text-color); opacity: 0.9; }
+    .accordion-item.open .accordion-content { max-height: 800px; padding: 0 14px 14px; }
 
     /* ARTETERAPIA CANVAS */
-    #canvas-modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-      background-color: var(--bg-color); z-index: 100; flex-direction: column;
-    }
+    #canvas-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background-color: var(--bg-color); z-index: 100; flex-direction: column; }
     .canvas-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid var(--border-color); }
     canvas { flex: 1; touch-action: none; cursor: crosshair; }
     .canvas-tools { padding: 10px; background: var(--card-bg); display: flex; gap: 8px; justify-content: center; }
     .tool-btn { padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-color); color: var(--text-color); cursor: pointer; }
 
-    /* BACKUP MODAL */
-    #backup-modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-      background: rgba(0,0,0,0.5); z-index: 101; align-items: center; justify-content: center;
-    }
-    .backup-card {
-      background: var(--card-bg); color: var(--text-color); padding: 20px;
-      border-radius: var(--border-radius); width: 90%; max-width: 380px; display: flex; flex-direction: column; gap: 12px;
-    }
-    .backup-card button, .backup-card label {
-      padding: 10px; background: var(--primary-color); color: var(--bg-color);
-      border: none; border-radius: 8px; text-align: center; cursor: pointer;
-    }
-    #importFile { display: none; }
-
     /* MODO ESCUDO - TELA DE DISFARCE */
-    #panic-screen {
-      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-      background-color: #ffffff; color: #5f6368; font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
-      z-index: 9999; padding: 40px 20px; box-sizing: border-box; flex-direction: column; justify-content: center; align-items: flex-start;
-    }
+    #panic-screen { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background-color: #ffffff; color: #5f6368; font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif; z-index: 9999; padding: 40px 20px; box-sizing: border-box; flex-direction: column; justify-content: center; align-items: flex-start; }
     .panic-content { max-width: 450px; margin: 0 auto; }
     .panic-icon { font-size: 48px; color: #5f6368; margin-bottom: 20px; }
     .panic-h1 { font-size: 1.3rem; color: #202124; margin-bottom: 12px; font-weight: 500; }
     .panic-p { font-size: 0.9rem; line-height: 1.5; color: #5f6368; margin-bottom: 20px; }
-    .panic-code {
-      font-size: 0.75rem; color: #70757a; font-family: monospace;
-      cursor: pointer; padding: 8px 0; display: inline-block; text-decoration: underline;
-    }
+    .panic-code { font-size: 0.75rem; color: #70757a; font-family: monospace; cursor: pointer; padding: 8px 0; display: inline-block; text-decoration: underline; }
 
-    /* TOAST DE NOTIFICAÇÃO DO VLIBRAS E PWA */
-    #toast-notification {
-      position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%);
-      background: var(--primary-color); color: var(--bg-color); padding: 10px 20px;
-      border-radius: 20px; font-size: 0.85rem; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; text-align: center; width: 90%; max-width: 350px;
-    }
+    /* TOAST DE NOTIFICAÇÃO */
+    #toast-notification { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--primary-color); color: var(--bg-color); padding: 10px 20px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; text-align: center; width: 90%; max-width: 350px; }
     #toast-notification.show { opacity: 1; }
   </style>
 
@@ -310,75 +196,136 @@
   <div id="brightness-overlay"></div>
   <div id="toast-notification"></div>
 
-  <!-- HEADER -->
+  <!-- CABEÇALHO LIMPO (Tríade de Emergência) -->
   <header>
-    <div class="brand-container" onclick="triggerPWAInstall()" title="Surpresa: Toque para instalar o app!">
+    <div class="brand-container" onclick="triggerPWAInstall()" title="Toque para instalar o app!">
       <div id="logo-anchor"></div>
       <span id="brand-title" class="brand-title">Aquele Abraço <span id="network-badge" class="network-badge badge-online">Conectando...</span></span>
     </div>
 
     <div class="header-actions">
-      <!-- V4.1 BOTÃO DE LIMPEZA DE MEMÓRIA E HISTÓRICO -->
-      <button class="icon-btn" onclick="clearChatMemory()" title="Limpar Conversa (Reset)">🧹</button>
-      
       <button class="icon-btn" onclick="triggerPanicLock()" title="Modo Escudo (Tranca Rápida)">🛡️</button>
-      <button class="icon-btn" onclick="toggleModal(true)" title="Como Funciona & Bastidores">❓</button>
-      <button class="icon-btn" onclick="toggleAudioPanel()" title="Frequências Terapêuticas">🎧</button>
-      <button class="icon-btn" onclick="toggleVoicePanel()" title="Ajustes da Voz Realista">🗣️</button>
-      <button class="icon-btn" onclick="toggleLightPanel()" title="Luz & Tema">💡</button>
-      <button class="icon-btn" onclick="toggleBackupModal()" title="Configurações e Backup">⚙️</button>
-    </div>
-
-    <!-- PAINEL DE CONTROLE DE VOZ DA IA -->
-    <div id="voice-panel">
-      <span style="font-size:0.9rem; font-weight:bold; border-bottom:1px solid var(--border-color); padding-bottom:4px;">Ajustes de Voz Realista</span>
-      <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
-        <div><span class="panel-label">Voz Humana do Sistema</span><select id="voiceSelect" class="panel-select" onchange="updateVoiceSettings()"></select></div>
-        <div>
-          <span class="panel-label">Estilos Emocionais Predefinidos</span>
-          <div class="preset-grid">
-            <button class="preset-btn" onclick="applyVoicePreset('acolhedora')">🤗 Acolhedora</button>
-            <button class="preset-btn" onclick="applyVoicePreset('serena')">🧘 Serena</button>
-            <button class="preset-btn" onclick="applyVoicePreset('energique')">⚡ Enérgica</button>
-            <button class="preset-btn" onclick="applyVoicePreset('natural')">🍃 Natural</button>
-          </div>
-        </div>
-        <div><span class="panel-label">Tom / Afinação <span id="pitchVal">1.0</span></span><input type="range" id="voicePitch" min="0.5" max="1.5" step="0.05" value="1.0" style="width:100%" oninput="updateVoiceSettings()"></div>
-        <div><span class="panel-label">Velocidade <span id="rateVal">0.95</span></span><input type="range" id="voiceRate" min="0.5" max="1.5" step="0.05" value="0.95" style="width:100%" oninput="updateVoiceSettings()"></div>
-        <div><span class="panel-label">Volume <span id="volVal">100%</span></span><input type="range" id="voiceVolume" min="0" max="1.0" step="0.1" value="1.0" style="width:100%" oninput="updateVoiceSettings()"></div>
-        <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
-          <input type="checkbox" id="autoAdvanceCheck" checked onchange="updateVoiceSettings()">
-          <label for="autoAdvanceCheck" style="font-size:0.75rem; font-weight:600; cursor:pointer;">Avanço Automático entre Parágrafos</label>
-        </div>
-        <button class="theme-btn" style="background:var(--primary-color); color:var(--bg-color); margin-top:4px; padding:8px;" onclick="testVoiceSettings()">🔊 Testar Voz Selecionada</button>
-      </div>
-    </div>
-
-    <!-- PAINEL DE ÁUDIO TERAPÊUTICO -->
-    <div id="audio-panel">
-      <span style="font-size:0.9rem; font-weight:bold; border-bottom:1px solid var(--border-color); padding-bottom:4px;">Frequências Terapêuticas</span>
-      <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
-        <button class="theme-btn" onclick="playAcoustic('chuva')">🌧️ Som de Chuva (Offline)</button>
-        <button class="theme-btn" onclick="playAcoustic('binaural')">🌊 Binaural 432Hz (Offline)</button>
-        <button class="theme-btn" onclick="playAcoustic('reset')">⚡ Reset Cognitivo 852Hz (Offline)</button>
-        <button class="theme-btn" onclick="playAcoustic('mindfulness')">🧘‍♂️ Rádio Mindfulness</button>
-        <button class="theme-btn" style="background:#e17055; color:white;" onclick="stopAcoustic()">⏹️ Parar Som</button>
-      </div>
-      <audio id="ambientPlayer" loop style="display:none;"></audio>
-    </div>
-
-    <!-- PAINEL DE TEMAS E LUZ -->
-    <div id="light-panel">
-      <span style="font-size:0.8rem; font-weight:bold;">Modo de Visão</span>
-      <div class="theme-options">
-        <button class="theme-btn" onclick="setTheme('light')">☀️ Claro</button>
-        <button class="theme-btn" onclick="setTheme('sepia')">📜 Sépia</button>
-        <button class="theme-btn" onclick="setTheme('dark')">🌙 Escuro</button>
-      </div>
-      <span style="font-size:0.8rem; font-weight:bold; margin-top:5px;">Reduzir Brilho</span>
-      <input type="range" min="0" max="0.7" step="0.05" value="0" oninput="setBrightness(this.value)">
+      <button class="icon-btn" onclick="openModal('audio-modal')" title="Frequências Terapêuticas">🎧</button>
+      <button class="icon-btn" onclick="openModal('settings-modal')" title="Menu Central">⚙️</button>
     </div>
   </header>
+
+  <!-- MODAL: ÁUDIO TERAPÊUTICO -->
+  <div id="audio-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 340px;">
+      <div class="modal-header">
+        <span class="modal-title">Frequências Terapêuticas</span>
+        <button class="close-btn" onclick="closeModal('audio-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Estes sons ajudam a desacelerar a mente. Os três primeiros funcionam totalmente offline.</p>
+        <button class="theme-btn" onclick="playAcoustic('chuva')">🌧️ Som de Chuva Nativo</button>
+        <button class="theme-btn" onclick="playAcoustic('binaural')">🌊 Binaural 432Hz (Calma)</button>
+        <button class="theme-btn" onclick="playAcoustic('reset')">⚡ Reset Cognitivo 852Hz</button>
+        <button class="theme-btn" onclick="playAcoustic('mindfulness')">🧘‍♂️ Rádio Mindfulness</button>
+        <button class="theme-btn" style="background:#e17055; color:white; margin-top:8px; border:none;" onclick="stopAcoustic()">⏹️ Parar Som</button>
+      </div>
+    </div>
+  </div>
+  <audio id="ambientPlayer" loop style="display:none;"></audio>
+
+  <!-- MODAL MASTER: MENU CENTRAL (Agrupa Voz, Tema, Privacidade e Ajuda) -->
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Menu Central</span>
+        <button class="close-btn" onclick="closeModal('settings-modal')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 15px;">
+        
+        <!-- Bloco 1: Tela e Tema -->
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <span>💡 Tela e Conforto Visual</span> <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            <br>
+            <div class="theme-options">
+              <button class="theme-btn" style="width:31%" onclick="setTheme('light')">☀️ Claro</button>
+              <button class="theme-btn" style="width:31%" onclick="setTheme('sepia')">📜 Sépia</button>
+              <button class="theme-btn" style="width:31%" onclick="setTheme('dark')">🌙 Escuro</button>
+            </div>
+            <span class="panel-label" style="margin-top:10px;">Reduzir Brilho (Proteção Ocular)</span>
+            <input type="range" min="0" max="0.7" step="0.05" value="0" style="width:100%" oninput="setBrightness(this.value)">
+          </div>
+        </div>
+
+        <!-- Bloco 2: Voz Humana -->
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)" onclick="populateVoices()">
+            <span>🗣️ Personalização de Voz</span> <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            <br>
+            <span class="panel-label">Voz Humana do Sistema</span>
+            <select id="voiceSelect" class="panel-select" onchange="updateVoiceSettings()"></select>
+            
+            <span class="panel-label">Estilos Emocionais Predefinidos</span>
+            <div class="preset-grid">
+              <button class="preset-btn" onclick="applyVoicePreset('acolhedora')">🤗 Acolhedora</button>
+              <button class="preset-btn" onclick="applyVoicePreset('serena')">🧘 Serena</button>
+              <button class="preset-btn" onclick="applyVoicePreset('energique')">⚡ Enérgica</button>
+              <button class="preset-btn" onclick="applyVoicePreset('natural')">🍃 Natural</button>
+            </div>
+            
+            <span class="panel-label">Tom / Afinação <span id="pitchVal">1.0</span></span>
+            <input type="range" id="voicePitch" min="0.5" max="1.5" step="0.05" value="1.0" style="width:100%; margin-bottom:8px;" oninput="updateVoiceSettings()">
+            
+            <span class="panel-label">Velocidade <span id="rateVal">0.95</span></span>
+            <input type="range" id="voiceRate" min="0.5" max="1.5" step="0.05" value="0.95" style="width:100%; margin-bottom:8px;" oninput="updateVoiceSettings()">
+            
+            <div style="display:flex; align-items:center; gap:6px; margin-top:8px;">
+              <input type="checkbox" id="autoAdvanceCheck" checked onchange="updateVoiceSettings()">
+              <label for="autoAdvanceCheck" style="font-size:0.8rem; font-weight:600; cursor:pointer;">Avanço Automático de Parágrafos</label>
+            </div>
+            <button class="theme-btn" style="background:var(--primary-color); color:var(--bg-color); margin-top:12px; width:100%;" onclick="testVoiceSettings()">🔊 Testar Voz Selecionada</button>
+          </div>
+        </div>
+
+        <!-- Bloco 3: Privacidade, Reset e IA Offline -->
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <span>🔒 Privacidade & Inteligência</span> <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            <br>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 12px;">Seus dados são 100% criptografados. Você tem total controle sobre sua privacidade e armazenamento.</p>
+            
+            <button id="download-ai-btn" onclick="downloadRealAI()" class="theme-btn" style="background:#0984e3; color:white; border:none;">🧠 Baixar Assistente Offline</button>
+            <button onclick="clearChatMemory()" class="theme-btn" style="background:#e17055; color:white; border:none;">🧹 Apagar Histórico de Conversa</button>
+            
+            <div style="display:flex; gap:6px; margin-top: 6px;">
+              <button onclick="exportBackup()" class="theme-btn" style="flex:1;">📤 Exportar Backup</button>
+              <label for="importFile" class="theme-btn" style="flex:1; text-align:center; margin:0; display:flex; align-items:center; justify-content:center;">📥 Restaurar Backup</label>
+              <input type="file" id="importFile" onchange="importBackup(event)" style="display:none;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 4: Manual do App (Aba ❓ Atualizada) -->
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <span>📖 Como usar o aplicativo?</span> <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            <br>
+            <p style="font-size: 0.85rem; margin-bottom:8px;"><strong>🧠 Chat Offline Agentic:</strong><br>Se a internet cair, a IA nativa do seu aparelho assume a conversa para te apoiar em uma crise, sugerindo ferramentas de alívio diretamente na tela.</p>
+            <p style="font-size: 0.85rem; margin-bottom:8px;"><strong>🧹 Limpeza de Memória (Reset):</strong><br>Sempre que quiser apagar o histórico por privacidade ou sentir que o assistente se confundiu, vá em "Privacidade" e clique em "Apagar Histórico". Isso zera a mente dele na hora.</p>
+            <p style="font-size: 0.85rem; margin-bottom:8px;"><strong>🤟 Acessibilidade Surda:</strong><br>Toque no ícone da mãozinha ao lado dos textos para ler a estrutura sintática em GLOSA instantaneamente. Você também pode enviar sinais pela Câmera 📷.</p>
+            <p style="font-size: 0.85rem; margin-bottom:8px;"><strong>📱 Instalar o App:</strong><br>Toque no nosso Logo (o Coração no topo) para instalar este aplicativo no celular como um PWA nativo.</p>
+            <p style="font-size: 0.85rem; margin-bottom:8px;"><strong>🛡️ Modo Escudo:</strong><br>O botão de escudo no topo tranca o app imediatamente e projeta uma tela de erro falsa na hora para sua proteção visual.</p>
+            <p style="font-size: 0.85rem;"><strong>🏛️ Bastidores:</strong><br>Projetado por Edwin Balera com foco em Fricção Zero, resiliência extrema e saúde mental acessível.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- ANIMAÇÃO CENTRAL (HERO) -->
   <div id="hero-wrapper" class="animation-wrapper">
@@ -432,13 +379,6 @@
         <button class="emoji-item" onclick="sendEmoji('🆘')">🆘</button>
       </div>
     </div>
-    <div class="emoji-category">
-      <span>Busca de Paz / Cura</span>
-      <div class="emoji-grid">
-        <button class="emoji-item" onclick="sendEmoji('🌱')">🌱</button><button class="emoji-item" onclick="sendEmoji('🕊️')">🕊️</button>
-        <button class="emoji-item" onclick="sendEmoji('🕯️')">🕯️</button><button class="emoji-item" onclick="sendEmoji('⚓')">⚓</button>
-      </div>
-    </div>
   </div>
 
   <!-- INPUT CONTROLS -->
@@ -460,7 +400,7 @@
     <div class="modal-card" style="align-items:center; text-align:center;">
       <div class="modal-header" style="width:100%;">
         <span class="modal-title">Gravação de Sinais / Gestos</span>
-        <button class="close-btn" onclick="closeCameraModal()">&times;</button>
+        <button class="close-btn" onclick="closeModal('camera-modal')">&times;</button>
       </div>
       <div class="modal-body" style="width:100%; align-items:center;">
         <video id="webcam-preview" autoplay playsinline style="width:100%; max-height:250px; border-radius:12px; background:#000;"></video>
@@ -476,84 +416,6 @@
         <button id="captureLibrasBtn" onclick="captureSignLanguage()" style="margin-top:12px; padding:10px 20px; background:var(--primary-color); color:var(--bg-color); border:none; border-radius:8px; cursor:pointer; font-weight:600;">
           Gravar Comunicação
         </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL COMO FUNCIONA -->
-  <div id="tutorial-modal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span class="modal-title">Guia de Acolhimento</span>
-        <button class="close-btn" onclick="toggleModal(false)">&times;</button>
-      </div>
-
-      <div class="modal-body">
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            <span style="flex:1;">⚙️ Como Baixar a IA Offline</span>
-            <div class="access-btns"><span class="access-btn" onclick="toggleAccordionAudio(event, this)">🔊</span><span class="access-btn" onclick="toggleAccordionLibras(event, this)">🤟</span></div>
-            <span class="accordion-icon">▼</span>
-          </button>
-          <div class="accordion-content">
-            Para que o chat inteligente funcione mesmo sem sinal de internet, você pode instalar a nossa Inteligência Artificial direto no seu aparelho. Basta abrir as <strong>Configurações (ícone ⚙️ no topo da tela)</strong> e clicar em "Baixar Assistente Offline". Recomendamos fazer o download conectado ao Wi-Fi.
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            <span style="flex:1;">🧠 Chat Contínuo & IA Agentic</span>
-            <div class="access-btns"><span class="access-btn" onclick="toggleAccordionAudio(event, this)">🔊</span><span class="access-btn" onclick="toggleAccordionLibras(event, this)">🤟</span></div>
-            <span class="accordion-icon">▼</span>
-          </button>
-          <div class="accordion-content">
-            Você agora pode conversar livremente mesmo sem internet. A nossa inteligência artificial local entende o contexto das suas palavras e, se detectar uma crise, sugere ferramentas de apoio diretamente dentro da conversa, de forma natural.
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            <span style="flex:1;">📱 Surpresa: Como Instalar o App</span>
-            <div class="access-btns"><span class="access-btn" onclick="toggleAccordionAudio(event, this)">🔊</span><span class="access-btn" onclick="toggleAccordionLibras(event, this)">🤟</span></div>
-            <span class="accordion-icon">▼</span>
-          </button>
-          <div class="accordion-content">
-            Você descobriu nosso segredo de design! Para ter o "Aquele Abraço" no seu celular e usá-lo offline, basta tocar no logo do coração no canto superior esquerdo da tela. No iPhone, use o botão "Compartilhar" e depois "Adicionar à Tela de Início".
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            <span style="flex:1;">🤟 Acessibilidade em GLOSA</span>
-            <div class="access-btns"><span class="access-btn" onclick="toggleAccordionAudio(event, this)">🔊</span><span class="access-btn" onclick="toggleAccordionLibras(event, this)">🤟</span></div>
-            <span class="accordion-icon">▼</span>
-          </button>
-          <div class="accordion-content">
-            O botão "🤟" ao lado das mensagens agora gera uma tradução estrutural em GLOSA (formato escrito da Língua de Sinais, sem preposições e em caixa alta) diretamente na tela, garantindo autonomia e leitura rápida para a comunidade surda durante as crises, sem depender de internet.
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            <span style="flex:1;">🎧 Frequências Terapêuticas Livres</span>
-            <div class="access-btns"><span class="access-btn" onclick="toggleAccordionAudio(event, this)">🔊</span><span class="access-btn" onclick="toggleAccordionLibras(event, this)">🤟</span></div>
-            <span class="accordion-icon">▼</span>
-          </button>
-          <div class="accordion-content">
-            Acesse o painel para reproduzir sons de ancoragem. O "Som de Chuva", "Binaural 432Hz" e "Reset Cognitivo 852Hz" são gerados pelo próprio celular (100% offline). Há também a rádio Mindfulness online sem anúncios.
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            <span style="flex:1;">🏛️ Bastidores do Abraço</span>
-            <div class="access-btns"><span class="access-btn" onclick="toggleAccordionAudio(event, this)">🔊</span><span class="access-btn" onclick="toggleAccordionLibras(event, this)">🤟</span></div>
-            <span class="accordion-icon">▼</span>
-          </button>
-          <div class="accordion-content">
-            Projetado por <strong>Edwin Balera</strong>, líder em arquitetura de engenharia de software e inovação técnica. A plataforma unifica rigidez técnica de alta performance com sensibilidade humana para oferecer um porto seguro imediato, com Fricção Zero e segurança absoluta de dados.
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -574,27 +436,6 @@
     </div>
   </div>
 
-  <!-- BACKUP E DOWNLOAD MODAL -->
-  <div id="backup-modal">
-    <div class="backup-card">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3>Soberania & Privacidade</h3>
-        <div class="access-btns">
-          <button class="access-btn" onclick="readGenericText('Soberania e Privacidade. Guarde seu registro criptografado no seu aparelho com total segurança.', this)">🔊</button>
-          <button class="access-btn" onclick="window.toggleGlosaText('Soberania e Privacidade. Guarde seu registro criptografado no seu aparelho com total segurança.', this.parentElement.parentElement)">🤟</button>
-        </div>
-      </div>
-      <p id="backup-desc" style="font-size: 0.8rem; color: #888; margin-top:5px; margin-bottom:15px;">Soberania e Privacidade. Guarde seu registro criptografado no seu aparelho com total segurança.</p>
-      
-      <button id="download-ai-btn" onclick="downloadRealAI()" style="background:#0984e3; color:white; font-weight:bold; margin-bottom: 8px;">🧠 Baixar Assistente Offline</button>
-
-      <button onclick="exportBackup()">Exportar Registro Criptografado</button>
-      <label for="importFile" style="margin-top: 8px;">Restaurar Registro</label>
-      <input type="file" id="importFile" onchange="importBackup(event)">
-      <button onclick="toggleBackupModal()" style="background:#ccc; color:#333; margin-top: 8px;">Fechar</button>
-    </div>
-  </div>
-
   <!-- DISFARCE DO MODO ESCUDO -->
   <div id="panic-screen">
     <div class="panic-content">
@@ -607,13 +448,7 @@
     </div>
   </div>
 
-  <!-- DIV DO COMPONENTE VLIBRAS -->
-  <div vw class="enabled">
-    <div vw-access-button class="active"></div>
-    <div vw-plugin-wrapper>
-      <div class="vw-plugin-top-wrapper"></div>
-    </div>
-  </div>
+  <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
 
   <script>
     const API_BACKEND_URL = "https://aquele-abraco.onrender.com/api/chat";
@@ -621,166 +456,109 @@
     let state = { session_history: [], internal_header: SECURE_HEADER, voiceSettings: { voiceIndex: 0, pitch: 1.0, rate: 0.95, volume: 1.0, autoAdvance: true } };
 
     const cbtSuggestions = {
-      "crise_fisica": [
-        { "label": "🧘 Técnica 5-4-3-2-1 (Aterramento)", "action": "TECNICA_54321" },
-        { "label": "🎧 Ligar som 432Hz para acalmar", "action": "PLAY_432" }
-      ],
-      "sobrecarga_sensorial": [
-        { "label": "🔊 Ativar 852Hz (Reset Cognitivo)", "action": "PLAY_852" }
-      ],
-      "redirecionar_arteterapia": [
-        { "label": "🎨 Abrir tela de desenho livre", "action": "OPEN_ART" }
-      ]
+      "crise_fisica": [ { "label": "🧘 Técnica 5-4-3-2-1", "action": "TECNICA_54321" }, { "label": "🎧 Ligar som 432Hz", "action": "PLAY_432" } ],
+      "sobrecarga_sensorial": [ { "label": "🔊 Ativar Reset 852Hz", "action": "PLAY_852" } ],
+      "redirecionar_arteterapia": [ { "label": "🎨 Abrir tela de desenho", "action": "OPEN_ART" } ]
     };
 
     window.offlineAIEngine = { isLoaded: false, engine: null };
     let deferredPrompt = null;
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault(); deferredPrompt = e;
-    });
-
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
     async function triggerPWAInstall() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        deferredPrompt = null;
-      } else {
-        showToast("💝 Surpresa! Para instalar no iPhone, use 'Compartilhar' > 'Adicionar à Tela de Início'. No Android, use o menu do seu navegador.");
-      }
+      if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; } 
+      else { showToast("💝 Surpresa! Para instalar no iPhone, use 'Compartilhar' > 'Adicionar à Tela de Início'. No Android, use o menu do navegador."); }
     }
 
-    /* V4.1: FUNÇÃO DE LIMPEZA DE MEMÓRIA (RESET DA IA) */
+    /* V4.2 FUNÇÕES DE MODAL UNIFICADAS */
+    function openModal(modalId) {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+      document.getElementById(modalId).classList.add('active');
+      if(modalId === 'settings-modal') populateVoices();
+    }
+    function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
+
+    /* RESET DE MEMÓRIA (Agora dentro do Modal ⚙️) */
     window.clearChatMemory = function() {
-      if(confirm("Tem certeza que deseja apagar toda a sua conversa? Isso limpará a memória da Inteligência Artificial e garantirá sua privacidade, mas não poderá ser desfeito.")) {
-        state.session_history = [];
-        saveState();
-        renderHistory();
-        currentEmotionalState = "ESTÁVEL";
-        const inputElem = document.getElementById('userInput');
-        if (inputElem) inputElem.style.borderColor = "var(--border-color)";
-        showToast("🧹 Memória apagada e conversa reiniciada com sucesso.");
+      if(confirm("Tem certeza que deseja apagar toda a sua conversa? Isso limpará a memória da Inteligência Artificial e garantirá sua privacidade. (Esta ação não pode ser desfeita)")) {
+        state.session_history = []; saveState(); renderHistory(); currentEmotionalState = "ESTÁVEL";
+        const inputElem = document.getElementById('userInput'); if (inputElem) inputElem.style.borderColor = "var(--border-color)";
+        showToast("🧹 Memória apagada com sucesso.");
+        closeModal('settings-modal');
       }
     }
 
-    /* TRADUTOR LOCAL GLOSA ESTRUTURAL */
+    /* TRADUTOR LOCAL GLOSA */
     window.toggleGlosaText = function(text, parentElem) {
       let glosaBox = parentElem.querySelector('.glosa-box');
       if (!glosaBox) {
-        glosaBox = document.createElement('div');
-        glosaBox.className = 'glosa-box';
-        
+        glosaBox = document.createElement('div'); glosaBox.className = 'glosa-box';
         let glosa = text.toUpperCase().replace(/[.,!?;\(\)\[\]"']/g, '');
         const stopWords = [' O ', ' A ', ' OS ', ' AS ', ' UM ', ' UMA ', ' UNS ', ' UMAS ', ' DE ', ' DO ', ' DA ', ' DOS ', ' DAS ', ' EM ', ' NO ', ' NA ', ' NOS ', ' NAS ', ' POR ', ' PARA ', ' COM ', ' QUE ', ' SE '];
         stopWords.forEach(w => { glosa = glosa.split(w).join(' '); });
-        if(glosa.startsWith('O ')) glosa = glosa.substring(2);
-        if(glosa.startsWith('A ')) glosa = glosa.substring(2);
-        
+        if(glosa.startsWith('O ')) glosa = glosa.substring(2); if(glosa.startsWith('A ')) glosa = glosa.substring(2);
         glosaBox.innerText = `🤟 GLOSA: ${glosa.replace(/\s+/g, ' ').trim()}`;
-        parentElem.appendChild(glosaBox);
-        setTimeout(() => glosaBox.classList.add('visible'), 10);
-      } else {
-        glosaBox.classList.toggle('visible');
-      }
+        parentElem.appendChild(glosaBox); setTimeout(() => glosaBox.classList.add('visible'), 10);
+      } else { glosaBox.classList.toggle('visible'); }
     }
 
-    /* DOWNLOAD REAL COM AVISO DE SEGURANÇA E HARDWARE */
+    /* DOWNLOAD REAL COM AVISO DE HARDWARE */
     window.downloadRealAI = async function() {
       if (!navigator.gpu) {
-        alert("Sabe, acabei de checar e o seu aparelho não suporta essa Inteligência Artificial mais pesada. Mas não precisa se preocupar, de verdade! O meu 'Escudo de Proteção' já está ativado e vai continuar cuidando de você sempre que faltar internet.");
-        return;
+        alert("O seu aparelho ainda não suporta a tecnologia necessária (WebGPU) para rodar esta IA avançada.\n\nMas não se preocupe! O meu 'Escudo TCC' já está ativado e vai continuar cuidando de você offline."); return;
       }
-
-      const msg = "Para eu poder conversar profundamente com você mesmo quando a internet cair, preciso criar um cantinho seguro no seu celular. Como esse meu 'cérebro' pesa cerca de 600MB, peço que você use uma rede Wi-Fi para não gastar os seus dados móveis, tá bom? Podemos iniciar o download?";
+      const msg = "Para eu poder conversar profundamente com você mesmo sem internet, preciso baixar meu motor seguro no seu aparelho (~600MB).\n\nPeço que use uma rede Wi-Fi para não gastar seus dados móveis. Podemos iniciar o download?";
+      if (!confirm(msg)) return; 
       
-      if (!confirm(msg)) {
-        return; 
-      }
-
       const btn = document.getElementById('download-ai-btn');
-      btn.innerText = "Preparando o meu cérebro..."; 
-      btn.style.background = "#fdcb6e"; btn.style.color = "#333"; btn.disabled = true;
+      btn.innerText = "Preparando o meu cérebro..."; btn.style.background = "#fdcb6e"; btn.style.color = "#333"; btn.disabled = true;
 
       try {
         const { CreateMLCEngine } = await import('https://esm.run/@mlc-ai/web-llm');
-        const initProgressCallback = (initProgress) => {
-          const prog = Math.round(initProgress.progress * 100);
-          btn.innerText = `Baixando IA: ${prog}% (Aguarde)`;
-        };
-        const selectedModel = "TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC";
-        window.offlineAIEngine.engine = await CreateMLCEngine(selectedModel, { initProgressCallback: initProgressCallback });
+        const initProgressCallback = (initProgress) => { btn.innerText = `Baixando IA: ${Math.round(initProgress.progress * 100)}% (Aguarde)`; };
+        window.offlineAIEngine.engine = await CreateMLCEngine("TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC", { initProgressCallback: initProgressCallback });
         window.offlineAIEngine.isLoaded = true;
-        
         localStorage.setItem('ia_offline_instalada', 'true');
-
         btn.innerText = "🧠 IA Offline Instalada"; btn.style.background = "#2ed573"; btn.style.color = "white";
-        alert("Tudo pronto! Seu assistente offline foi instalado com sucesso.");
-        updateNetworkStatus();
+        alert("Tudo pronto! Seu assistente offline foi instalado com sucesso."); updateNetworkStatus();
       } catch (error) {
-        console.error(error);
         btn.innerText = "Erro ao baixar (Tente com Wi-Fi)"; btn.style.background = "#e17055"; btn.style.color = "white"; btn.disabled = false;
       }
     };
 
-    function registrarTelemetria() {
-      let stats = JSON.parse(localStorage.getItem('abraco_telemetry')) || { sessoes: 0 };
-      stats.sessoes += 1; localStorage.setItem('abraco_telemetry', JSON.stringify(stats));
-    }
+    function registrarTelemetria() { let stats = JSON.parse(localStorage.getItem('abraco_telemetry')) || { sessoes: 0 }; stats.sessoes += 1; localStorage.setItem('abraco_telemetry', JSON.stringify(stats)); }
 
-    const canvas = document.getElementById('logoCanvas');
-    const ctx = canvas.getContext('2d');
-    const heroWrapper = document.getElementById('hero-wrapper');
-    const logoAnchor = document.getElementById('logo-anchor');
-    const brandTitle = document.getElementById('brand-title');
-    const chatContainer = document.getElementById('chat-container');
-
-    let startTime = null;
-    const cycleDuration = 6000;
-    let currentSpeakingPElem = null;
+    const canvas = document.getElementById('logoCanvas'); const ctx = canvas.getContext('2d');
+    const heroWrapper = document.getElementById('hero-wrapper'); const logoAnchor = document.getElementById('logo-anchor');
+    const brandTitle = document.getElementById('brand-title'); const chatContainer = document.getElementById('chat-container');
+    let startTime = null; const cycleDuration = 6000; let currentSpeakingPElem = null;
     let keystrokeData = { timestamps: [], backspaceCount: 0, lastKeyDownTime: 0 };
-    let currentEmotionalState = "ESTÁVEL";
-    let synthAudioCtx = null;
-    let synthNodes = [];
+    let currentEmotionalState = "ESTÁVEL"; let synthAudioCtx = null; let synthNodes = [];
 
     window.onload = () => {
       registrarTelemetria(); loadState(); initCanvas(); initVoices(); initVLibras(); initMicroExpressionEngine(); initNetworkMonitor();
-      
       if (localStorage.getItem('ia_offline_instalada') === 'true') {
          const btn = document.getElementById('download-ai-btn');
          if(btn) { btn.innerText = "🧠 IA Offline Instalada"; btn.style.background = "#2ed573"; btn.style.color = "white"; btn.disabled = true; }
       }
-
       setTimeout(() => {
         logoAnchor.appendChild(heroWrapper); heroWrapper.classList.add('minimized');
         brandTitle.classList.add('visible'); chatContainer.classList.add('visible');
-        
         if (localStorage.getItem('ia_offline_instalada') === 'true') {
             import('https://esm.run/@mlc-ai/web-llm').then(async (webllm) => {
-              try {
-                window.offlineAIEngine.engine = await webllm.CreateMLCEngine("TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC");
-                window.offlineAIEngine.isLoaded = true;
-                updateNetworkStatus();
-              } catch(e) {}
+              try { window.offlineAIEngine.engine = await webllm.CreateMLCEngine("TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC"); window.offlineAIEngine.isLoaded = true; updateNetworkStatus(); } catch(e) {}
             }).catch(err => {});
         }
       }, cycleDuration);
       requestAnimationFrame(animateLogo);
     };
 
-    function initNetworkMonitor() {
-      window.addEventListener('online', updateNetworkStatus); window.addEventListener('offline', updateNetworkStatus); updateNetworkStatus();
-    }
-
+    function initNetworkMonitor() { window.addEventListener('online', updateNetworkStatus); window.addEventListener('offline', updateNetworkStatus); updateNetworkStatus(); }
     function updateNetworkStatus() {
       const badge = document.getElementById('network-badge');
-      const temIALocal = window.offlineAIEngine && window.offlineAIEngine.isLoaded;
-      if (navigator.onLine) {
-        badge.textContent = 'Online'; badge.className = 'network-badge badge-online';
-      } else if (temIALocal) {
-        badge.textContent = 'IA Local'; badge.className = 'network-badge badge-ai-local';
-      } else {
-        badge.textContent = 'Offline Protegido'; badge.className = 'network-badge badge-offline';
-      }
+      if (navigator.onLine) { badge.textContent = 'Online'; badge.className = 'network-badge badge-online'; } 
+      else if (window.offlineAIEngine && window.offlineAIEngine.isLoaded) { badge.textContent = 'IA Local'; badge.className = 'network-badge badge-ai-local'; } 
+      else { badge.textContent = 'Offline Protegido'; badge.className = 'network-badge badge-offline'; }
     }
 
     window.executeCBTSuggestion = function(actionCode, btnElement) {
@@ -788,30 +566,20 @@
       else if (actionCode === 'PLAY_852') playAcoustic('reset');
       else if (actionCode === 'OPEN_ART') openCanvas();
       else if (actionCode === 'TECNICA_54321') {
-        const txt = "Vamos aterrar sua mente. Olhe ao redor e encontre: 5 coisas que você pode ver. 4 coisas que pode tocar. 3 que pode ouvir. 2 que pode cheirar. E 1 emoção boa.";
-        appendMessage(txt, 'assistant', false);
-        setTimeout(() => {
-          const msgs = document.querySelectorAll('.message.assistant .paragraph-item');
-          if (msgs.length > 0) {
-             const lastMsg = msgs[msgs.length - 1];
-             const pText = lastMsg.querySelector('.paragraph-text').innerText;
-             window.toggleGlosaText(pText, lastMsg);
-          }
-        }, 1000);
+        appendMessage("Vamos aterrar sua mente. Olhe ao redor e encontre: 5 coisas que você pode ver. 4 que pode tocar. 3 ouvir. 2 cheirar. 1 emoção boa.", 'assistant', false);
+        setTimeout(() => { const msgs = document.querySelectorAll('.message.assistant .paragraph-item'); if (msgs.length > 0) window.toggleGlosaText(msgs[msgs.length - 1].querySelector('.paragraph-text').innerText, msgs[msgs.length - 1]); }, 1000);
       }
       btnElement.innerText = "✓ " + btnElement.innerText; btnElement.style.background = "#d4edda"; btnElement.disabled = true;
     }
 
-    function initVLibras() { if (typeof window.VLibras !== 'undefined') { new window.VLibras.Widget('https://vlibras.gov.br/app'); } }
-    function showToast(message) { const toast = document.getElementById('toast-notification'); toast.innerText = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 4500); }
+    function initVLibras() { if (typeof window.VLibras !== 'undefined') new window.VLibras.Widget('https://vlibras.gov.br/app'); }
+    function showToast(message) { const toast = document.getElementById('toast-notification'); toast.innerText = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 4500); }
 
     function animateLogo(timestamp) {
       if (!startTime) startTime = timestamp; let progress = (timestamp - startTime) % cycleDuration; let t = progress / cycleDuration;
       let hugProgress = 0; if (t > 0.4 && t <= 0.6) hugProgress = (t - 0.4) / 0.2; else if (t > 0.6 && t <= 0.9) hugProgress = 1; else if (t > 0.9) hugProgress = 1 - (t - 0.9) / 0.1;
-      ctx.clearRect(0, 0, canvas.width, canvas.height); let strokeColor = getComputedStyle(document.body).getPropertyValue('--primary-color').trim();
-      let squeeze = hugProgress * 18; let sway = Math.sin(t * Math.PI * 2) * (hugProgress * 4);
-      ctx.save(); ctx.translate(200 + sway, 200); ctx.beginPath(); ctx.strokeStyle = strokeColor; ctx.lineWidth = 4.5;
-      ctx.moveTo(0, 110); ctx.bezierCurveTo(-60 + squeeze, 70, -110 + squeeze, 30, -110 + squeeze, -30); ctx.bezierCurveTo(-110 + squeeze, -80, -40, -100, 0, -40); ctx.bezierCurveTo(40, -100, 110 - squeeze, -80, 110 - squeeze, -30); ctx.bezierCurveTo(110 - squeeze, 30, 60 - squeeze, 70, 0, 110); ctx.stroke();
+      ctx.clearRect(0, 0, canvas.width, canvas.height); let strokeColor = getComputedStyle(document.body).getPropertyValue('--primary-color').trim(); let squeeze = hugProgress * 18; let sway = Math.sin(t * Math.PI * 2) * (hugProgress * 4);
+      ctx.save(); ctx.translate(200 + sway, 200); ctx.beginPath(); ctx.strokeStyle = strokeColor; ctx.lineWidth = 4.5; ctx.moveTo(0, 110); ctx.bezierCurveTo(-60 + squeeze, 70, -110 + squeeze, 30, -110 + squeeze, -30); ctx.bezierCurveTo(-110 + squeeze, -80, -40, -100, 0, -40); ctx.bezierCurveTo(40, -100, 110 - squeeze, -80, 110 - squeeze, -30); ctx.bezierCurveTo(110 - squeeze, 30, 60 - squeeze, 70, 0, 110); ctx.stroke();
       if (hugProgress > 0.3) { let alpha = (hugProgress - 0.3) / 0.7; ctx.strokeStyle = strokeColor; ctx.lineWidth = 2.5; ctx.globalAlpha = alpha; ctx.beginPath(); ctx.moveTo(-95 + squeeze, 10); ctx.quadraticCurveTo(-85 + squeeze, 20, -90 + squeeze, 30); ctx.moveTo(95 - squeeze, 10); ctx.quadraticCurveTo(85 - squeeze, 20, 90 - squeeze, 30); ctx.stroke(); ctx.globalAlpha = 1.0; }
       if (hugProgress < 0.5) { ctx.fillStyle = strokeColor; ctx.beginPath(); ctx.arc(-35, -25, 4.5, 0, Math.PI * 2); ctx.arc(35, -25, 4.5, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.lineWidth = 3.5; ctx.arc(0, 5, 25, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke(); } else { ctx.lineWidth = 3.5; ctx.beginPath(); ctx.arc(-35, -30, 12, 0.1 * Math.PI, 0.9 * Math.PI); ctx.moveTo(47, -30); ctx.arc(35, -30, 12, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke(); ctx.beginPath(); ctx.arc(0, 10, 18, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke(); }
       let armAngle = hugProgress * 1.45; ctx.save(); ctx.translate(-95 + squeeze, 0); ctx.rotate(armAngle); ctx.beginPath(); ctx.lineWidth = 4; ctx.moveTo(0, 0); ctx.bezierCurveTo(20, 40, 60, 60, 110, 45); ctx.stroke(); if (hugProgress > 0.6) { ctx.beginPath(); ctx.lineWidth = 2.5; ctx.moveTo(110, 45); ctx.lineTo(125, 38); ctx.moveTo(110, 45); ctx.lineTo(128, 43); ctx.moveTo(110, 45); ctx.lineTo(127, 49); ctx.moveTo(110, 45); ctx.lineTo(123, 54); ctx.stroke(); } ctx.restore();
@@ -823,53 +591,45 @@
     function exportBackupSilent() { const dataStr = JSON.stringify(state); const encrypted = btoa(unescape(encodeURIComponent(dataStr))); const blob = new Blob([encrypted], { type: 'application/octet-stream' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'registro_seguro.dat'; a.click(); URL.revokeObjectURL(url); }
 
     let cameraStream = null; let mediaRecorder = null; let recordedChunks = [];
-    async function openCameraModal() { const modal = document.getElementById('camera-modal'); const video = document.getElementById('webcam-preview'); modal.classList.add('active'); try { cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } }, audio: false }); video.srcObject = cameraStream; } catch (err) { alert("Não foi possível acessar a câmera para captação de vídeo."); closeCameraModal(); } }
-    function closeCameraModal() { const modal = document.getElementById('camera-modal'); modal.classList.remove('active'); if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop(); if (cameraStream) { cameraStream.getTracks().forEach(track => track.stop()); cameraStream = null; } }
+    async function openCameraModal() { openModal('camera-modal'); const video = document.getElementById('webcam-preview'); try { cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } }); video.srcObject = cameraStream; } catch (err) { alert("Sem acesso à câmera."); closeModal('camera-modal'); } }
+    function closeCameraModal() { closeModal('camera-modal'); if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop(); if (cameraStream) { cameraStream.getTracks().forEach(track => track.stop()); cameraStream = null; } }
     function captureSignLanguage() {
-      if (!cameraStream) return; const durationSelect = document.getElementById('videoDuration'); const recordTimeMs = parseInt(durationSelect.value) || 3500; const recordTimeSec = (recordTimeMs / 1000).toFixed(1);
-      recordedChunks = []; const btn = document.getElementById('captureLibrasBtn'); btn.innerText = `Gravando sinais (${recordTimeSec}s)...`; btn.disabled = true; durationSelect.disabled = true;
+      if (!cameraStream) return; const recordTimeMs = parseInt(document.getElementById('videoDuration').value) || 3500;
+      recordedChunks = []; const btn = document.getElementById('captureLibrasBtn'); btn.innerText = `Gravando...`; btn.disabled = true;
       try { mediaRecorder = new MediaRecorder(cameraStream, { mimeType: 'video/webm' }); } catch (e) { mediaRecorder = new MediaRecorder(cameraStream); }
       mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
       mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, { type: 'video/webm' }); const reader = new FileReader(); reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-          const videoBase64 = reader.result; closeCameraModal(); btn.innerText = "Gravar Comunicação"; btn.disabled = false; durationSelect.disabled = false; appendMessage(`[Sinalização em vídeo enviada - ${recordTimeSec}s]`, 'user');
-          const hiddenContext = `[MANDATÓRIO: O usuário enviou um vídeo de ${recordTimeSec}s. TAREFA: 1) Analise os gestos e a emoção facial. 2) Compreenda a mensagem. 3) Responda DIRETAMENTE ao usuário. 4) Você está PROIBIDO de criar relatórios ou usar inglês. 5) SUA RESPOSTA DEVE SER EXCLUSIVAMENTE UM OBJETO JSON VÁLIDO no formato: {"portugues": "Sua resposta empática aqui", "glosa": "ESTRUTURA EM LIBRAS AQUI", "detected_libras": true}]`;
-          processUserMessage(hiddenContext, videoBase64, "video/webm");
-        };
+        const reader = new FileReader(); reader.readAsDataURL(new Blob(recordedChunks, { type: 'video/webm' }));
+        reader.onloadend = () => { closeCameraModal(); btn.innerText = "Gravar Comunicação"; btn.disabled = false; appendMessage(`[Vídeo de Sinais enviado]`, 'user'); processUserMessage(`[MANDATÓRIO: O usuário enviou vídeo de sinais. Analise e responda direto como JSON válido: {"portugues": "Resposta", "glosa": "ESTRUTURA AQUI"}]`, reader.result, "video/webm"); };
       };
       mediaRecorder.start(); setTimeout(() => { if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop(); }, recordTimeMs);
     }
 
     function initMicroExpressionEngine() {
       const inputElem = document.getElementById('userInput'); if (!inputElem) return;
-      inputElem.addEventListener('keydown', (e) => { const now = Date.now(); if (e.key === 'Backspace') keystrokeData.backspaceCount++; if (keystrokeData.lastKeyDownTime > 0) { const flightTime = now - keystrokeData.lastKeyDownTime; keystrokeData.timestamps.push(flightTime); if (keystrokeData.timestamps.length > 12) keystrokeData.timestamps.shift(); } keystrokeData.lastKeyDownTime = now; });
+      inputElem.addEventListener('keydown', (e) => { const now = Date.now(); if (e.key === 'Backspace') keystrokeData.backspaceCount++; if (keystrokeData.lastKeyDownTime > 0) { keystrokeData.timestamps.push(now - keystrokeData.lastKeyDownTime); if (keystrokeData.timestamps.length > 12) keystrokeData.timestamps.shift(); } keystrokeData.lastKeyDownTime = now; });
       inputElem.addEventListener('input', (e) => {
-        const text = e.target.value.toLowerCase(); let avgFlightTime = 0; if (keystrokeData.timestamps.length > 0) avgFlightTime = keystrokeData.timestamps.reduce((a, b) => a + b, 0) / keystrokeData.timestamps.length;
-        const hasEmergencyWord = ["socorro", "me ajuda", "nao aguento", "não aguento", "desespero", "panico", "pânico"].some(word => text.includes(word));
-        if (hasEmergencyWord || (avgFlightTime > 0 && avgFlightTime < 55) || keystrokeData.backspaceCount > 10) { currentEmotionalState = "ALERTA_PÂNICO"; inputElem.style.borderColor = "#e17055"; } else { currentEmotionalState = "ESTÁVEL"; inputElem.style.borderColor = "var(--border-color)"; }
+        const text = e.target.value.toLowerCase(); let avgTime = keystrokeData.timestamps.length > 0 ? keystrokeData.timestamps.reduce((a, b) => a + b, 0) / keystrokeData.timestamps.length : 0;
+        if (["socorro", "ajuda", "aguento", "desespero", "panico", "pânico"].some(w => text.includes(w)) || (avgTime > 0 && avgTime < 55) || keystrokeData.backspaceCount > 10) { currentEmotionalState = "ALERTA_PÂNICO"; inputElem.style.borderColor = "#e17055"; } else { currentEmotionalState = "ESTÁVEL"; inputElem.style.borderColor = "var(--border-color)"; }
       });
     }
 
-    function toggleVoicePanel() { const panel = document.getElementById('voice-panel'); document.getElementById('light-panel').style.display = 'none'; document.getElementById('audio-panel').style.display = 'none'; panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex'; populateVoices(); }
     function populateVoices() {
       if (!('speechSynthesis' in window)) return; const select = document.getElementById('voiceSelect'); if (!select) return;
-      const voices = window.speechSynthesis.getVoices(); select.innerHTML = ''; const ptVoices = voices.filter(v => v.lang.includes('pt') || v.lang.includes('PT')); const otherVoices = voices.filter(v => !v.lang.includes('pt') && !v.lang.includes('PT'));
+      const voices = window.speechSynthesis.getVoices(); select.innerHTML = ''; const ptVoices = voices.filter(v => v.lang.includes('pt')); const otherVoices = voices.filter(v => !v.lang.includes('pt'));
       if (ptVoices.length > 0) {
-        const groupPt = document.createElement('optgroup'); groupPt.label = "✨ Vozes em Português (Recomendadas)";
-        ptVoices.forEach(v => { const opt = document.createElement('option'); opt.value = voices.indexOf(v); const isNeural = v.name.includes("Google") || v.name.includes("Natural") || v.name.includes("Neural") || v.name.includes("Microsoft"); opt.textContent = `${isNeural ? "🤖✨ " : "🎙️ "}${v.name} (${v.lang})`; groupPt.appendChild(opt); }); select.appendChild(groupPt);
+        const groupPt = document.createElement('optgroup'); groupPt.label = "✨ Vozes em Português";
+        ptVoices.forEach(v => { const opt = document.createElement('option'); opt.value = voices.indexOf(v); opt.textContent = `${v.name.includes("Google") ? "🤖✨ " : "🎙️ "}${v.name}`; groupPt.appendChild(opt); }); select.appendChild(groupPt);
         const groupOther = document.createElement('optgroup'); groupOther.label = "Outras Vozes";
-        otherVoices.forEach(v => { const opt = document.createElement('option'); opt.value = voices.indexOf(v); opt.textContent = `${v.name} (${v.lang})`; groupOther.appendChild(opt); }); select.appendChild(groupOther);
-      } else { voices.forEach((v, idx) => { const opt = document.createElement('option'); opt.value = idx; opt.textContent = `${v.name} (${v.lang})`; select.appendChild(opt); }); }
-      if (state.voiceSettings && state.voiceSettings.voiceIndex !== undefined && voices[state.voiceSettings.voiceIndex]) select.value = state.voiceSettings.voiceIndex;
+        otherVoices.forEach(v => { const opt = document.createElement('option'); opt.value = voices.indexOf(v); opt.textContent = v.name; groupOther.appendChild(opt); }); select.appendChild(groupOther);
+      } else { voices.forEach((v, idx) => { const opt = document.createElement('option'); opt.value = idx; opt.textContent = v.name; select.appendChild(opt); }); }
+      if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) select.value = state.voiceSettings.voiceIndex;
     }
-    function applyVoicePreset(presetName) { const pitchInput = document.getElementById('voicePitch'); const rateInput = document.getElementById('voiceRate'); if (presetName === 'acolhedora') { pitchInput.value = 0.95; rateInput.value = 0.85; } else if (presetName === 'serena') { pitchInput.value = 0.85; rateInput.value = 0.75; } else if (presetName === 'energique') { pitchInput.value = 1.15; rateInput.value = 1.05; } else if (presetName === 'natural') { pitchInput.value = 1.0; rateInput.value = 0.95; } updateVoiceSettings(); }
-    function updateVoiceSettings() { const select = document.getElementById('voiceSelect'); const pitch = document.getElementById('voicePitch'); const rate = document.getElementById('voiceRate'); const volume = document.getElementById('voiceVolume'); const autoCheck = document.getElementById('autoAdvanceCheck'); state.voiceSettings = { voiceIndex: parseInt(select.value) || 0, pitch: parseFloat(pitch.value) || 1.0, rate: parseFloat(rate.value) || 0.95, volume: parseFloat(volume.value) || 1.0, autoAdvance: autoCheck ? autoCheck.checked : true }; document.getElementById('pitchVal').innerText = state.voiceSettings.pitch; document.getElementById('rateVal').innerText = state.voiceSettings.rate; document.getElementById('volVal').innerText = Math.round(state.voiceSettings.volume * 100) + '%'; saveState(); }
-    function testVoiceSettings() { updateVoiceSettings(); window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance("Este é um teste da voz humanizada e acolhedora do Aquele Abraço."); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; } utterance.pitch = state.voiceSettings.pitch; utterance.rate = state.voiceSettings.rate; utterance.volume = state.voiceSettings.volume; window.speechSynthesis.speak(utterance); }
-    function toggleLightPanel() { const panel = document.getElementById('light-panel'); document.getElementById('voice-panel').style.display = 'none'; document.getElementById('audio-panel').style.display = 'none'; panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex'; }
+    function applyVoicePreset(presetName) { const p = document.getElementById('voicePitch'), r = document.getElementById('voiceRate'); if (presetName === 'acolhedora') { p.value = 0.95; r.value = 0.85; } else if (presetName === 'serena') { p.value = 0.85; r.value = 0.75; } else if (presetName === 'energique') { p.value = 1.15; r.value = 1.05; } else { p.value = 1.0; r.value = 0.95; } updateVoiceSettings(); }
+    function updateVoiceSettings() { state.voiceSettings = { voiceIndex: parseInt(document.getElementById('voiceSelect').value) || 0, pitch: parseFloat(document.getElementById('voicePitch').value) || 1.0, rate: parseFloat(document.getElementById('voiceRate').value) || 0.95, volume: parseFloat(document.getElementById('voiceVolume').value) || 1.0, autoAdvance: document.getElementById('autoAdvanceCheck').checked }; document.getElementById('pitchVal').innerText = state.voiceSettings.pitch; document.getElementById('rateVal').innerText = state.voiceSettings.rate; document.getElementById('volVal').innerText = Math.round(state.voiceSettings.volume * 100) + '%'; saveState(); }
+    function testVoiceSettings() { updateVoiceSettings(); window.speechSynthesis.cancel(); resetAudioState(); const utt = new SpeechSynthesisUtterance("Este é um teste da voz humanizada do Aquele Abraço."); utt.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (voices[state.voiceSettings.voiceIndex]) utt.voice = voices[state.voiceSettings.voiceIndex]; utt.pitch = state.voiceSettings.pitch; utt.rate = state.voiceSettings.rate; utt.volume = state.voiceSettings.volume; window.speechSynthesis.speak(utt); }
     function setTheme(theme) { document.body.className = ''; if (theme !== 'light') document.body.classList.add(`theme-${theme}`); }
     function setBrightness(val) { document.documentElement.style.setProperty('--screen-brightness', val); }
-    function toggleAudioPanel() { const panel = document.getElementById('audio-panel'); document.getElementById('light-panel').style.display = 'none'; document.getElementById('voice-panel').style.display = 'none'; panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex'; }
 
     function initSynthAudio() { if (!synthAudioCtx) synthAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (synthAudioCtx.state === 'suspended') synthAudioCtx.resume(); }
     function stopSyntheticAudio() { synthNodes.forEach(node => { try { node.stop(); } catch(e) {} }); synthNodes = []; }
@@ -877,77 +637,57 @@
     function playRain() { initSynthAudio(); stopSyntheticAudio(); const noiseSource = synthAudioCtx.createBufferSource(); noiseSource.buffer = createPinkNoise(); noiseSource.loop = true; const filter = synthAudioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 1000; const gain = synthAudioCtx.createGain(); gain.gain.value = 0.5; noiseSource.connect(filter); filter.connect(gain); gain.connect(synthAudioCtx.destination); noiseSource.start(); synthNodes.push(noiseSource); }
     function playBinaural() { initSynthAudio(); stopSyntheticAudio(); const oscL = synthAudioCtx.createOscillator(); oscL.type = 'sine'; oscL.frequency.value = 432; const oscR = synthAudioCtx.createOscillator(); oscR.type = 'sine'; oscR.frequency.value = 436; const panL = synthAudioCtx.createStereoPanner ? synthAudioCtx.createStereoPanner() : synthAudioCtx.createPanner(); if(panL.pan) panL.pan.value = -1; else panL.setPosition(-1, 0, 0); const panR = synthAudioCtx.createStereoPanner ? synthAudioCtx.createStereoPanner() : synthAudioCtx.createPanner(); if(panR.pan) panR.pan.value = 1; else panR.setPosition(1, 0, 0); const gain = synthAudioCtx.createGain(); gain.gain.value = 0.15; oscL.connect(panL); oscR.connect(panR); panL.connect(gain); panR.connect(gain); gain.connect(synthAudioCtx.destination); oscL.start(); oscR.start(); synthNodes.push(oscL, oscR); }
     function play852Hz() { initSynthAudio(); stopSyntheticAudio(); const osc = synthAudioCtx.createOscillator(); const gain = synthAudioCtx.createGain(); osc.type = 'sine'; osc.frequency.value = 852; gain.gain.setValueAtTime(0, synthAudioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.15, synthAudioCtx.currentTime + 2); osc.connect(gain); gain.connect(synthAudioCtx.destination); osc.start(); synthNodes.push(osc); }
-    function playAcoustic(track) { const player = document.getElementById('ambientPlayer'); player.pause(); stopSyntheticAudio(); if (track === 'chuva') playRain(); else if (track === 'binaural') playBinaural(); else if (track === 'reset') play852Hz(); else if (track === 'mindfulness') { player.src = 'https://ice1.somafm.com/dronezone-128-mp3'; player.volume = 0.2; player.play().catch(e => console.log("Áudio bloqueado.")); } }
-    function stopAcoustic() { const player = document.getElementById('ambientPlayer'); player.pause(); stopSyntheticAudio(); }
-    function resetAudioState() { document.querySelectorAll('.paragraph-item').forEach(p => p.classList.remove('speaking')); document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('speaking')); document.querySelectorAll('.access-btn').forEach(b => { if(b.innerText === '⏹️') b.innerText = '🔊'; }); currentSpeakingPElem = null; currentSpeakingAccordionBtn = null; }
-    function readGenericText(text, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada."); if (window.speechSynthesis.speaking && btnElem.innerText === '⏹️') { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0); utterance.rate = parseFloat(state.voiceSettings.rate || 0.95); utterance.volume = parseFloat(state.voiceSettings.volume || 1.0); } else utterance.rate = 0.95; utterance.onend = () => resetAudioState(); utterance.onerror = () => resetAudioState(); btnElem.innerText = '⏹️'; window.speechSynthesis.speak(utterance); }
-    function toggleAccordionAudio(event, btnElem) { event.stopPropagation(); const accordionItem = btnElem.closest('.accordion-item'); const textToRead = accordionItem.querySelector('.accordion-content').innerText; if (!accordionItem.classList.contains('open')) { document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open')); accordionItem.classList.add('open'); } readGenericText(textToRead, btnElem); accordionItem.classList.add('speaking'); }
-    function toggleAccordionLibras(event, btnElem) { 
-      event.stopPropagation(); const accordionItem = btnElem.closest('.accordion-item'); const contentNode = accordionItem.querySelector('.accordion-content'); 
-      if (!accordionItem.classList.contains('open')) { document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open')); accordionItem.classList.add('open'); } 
-      window.toggleGlosaText(contentNode.innerText, contentNode);
-    }
+    function playAcoustic(track) { const player = document.getElementById('ambientPlayer'); player.pause(); stopSyntheticAudio(); closeModal('audio-modal'); if (track === 'chuva') playRain(); else if (track === 'binaural') playBinaural(); else if (track === 'reset') play852Hz(); else if (track === 'mindfulness') { player.src = 'https://ice1.somafm.com/dronezone-128-mp3'; player.volume = 0.2; player.play().catch(e => console.log("Áudio bloqueado.")); } }
+    function stopAcoustic() { const player = document.getElementById('ambientPlayer'); player.pause(); stopSyntheticAudio(); closeModal('audio-modal'); }
     
-    function toggleAudioForParagraph(pText, pElem, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada."); if (currentSpeakingPElem === pElem && window.speechSynthesis.speaking) { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(pText); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0); utterance.rate = parseFloat(state.voiceSettings.rate || 0.95); utterance.volume = parseFloat(state.voiceSettings.volume || 1.0); } else utterance.rate = 0.95; utterance.onend = () => { pElem.classList.remove('speaking'); if (btnElem) btnElem.innerText = '🔊'; currentSpeakingPElem = null; const autoAdvance = state.voiceSettings ? state.voiceSettings.autoAdvance : true; if (autoAdvance) { const parentMsg = pElem.closest('.message'); if (parentMsg) { const paragraphs = Array.from(parentMsg.querySelectorAll('.paragraph-item')); const currentIndex = paragraphs.indexOf(pElem); if (currentIndex !== -1 && currentIndex < paragraphs.length - 1) { const nextPElem = paragraphs[currentIndex + 1]; const nextBtnElems = nextPElem.querySelectorAll('.access-btn'); let nextBtnElem = null; nextBtnElems.forEach(b => { if(b.innerText === '🔊') nextBtnElem = b; }); const nextText = nextPElem.querySelector('.paragraph-text').innerText; setTimeout(() => { toggleAudioForParagraph(nextText, nextPElem, nextBtnElem); }, 250); } } } }; utterance.onerror = () => resetAudioState(); pElem.classList.add('speaking'); if (btnElem) btnElem.innerText = '⏹️'; currentSpeakingPElem = pElem; window.speechSynthesis.speak(utterance); }
-    function handleFileUpload(event) { const file = event.target.files[0]; if (!file) return; appendMessage(`[Anexo Enviado: ${file.name}]`, 'user'); const reader = new FileReader(); reader.onloadend = () => { const fileBase64 = reader.result; processUserMessage(`Acabei de anexar um arquivo chamado "${file.name}". Por favor, verifique o conteúdo dele e responda apropriadamente.`, fileBase64, file.type); }; reader.readAsDataURL(file); }
+    function resetAudioState() { document.querySelectorAll('.paragraph-item').forEach(p => p.classList.remove('speaking')); document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('speaking')); document.querySelectorAll('.access-btn').forEach(b => { if(b.innerText === '⏹️') b.innerText = '🔊'; }); currentSpeakingPElem = null; }
+    function readGenericText(text, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada."); if (window.speechSynthesis.speaking && btnElem.innerText === '⏹️') { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = state.voiceSettings.pitch; utterance.rate = state.voiceSettings.rate; utterance.volume = state.voiceSettings.volume; } else utterance.rate = 0.95; utterance.onend = () => resetAudioState(); utterance.onerror = () => resetAudioState(); btnElem.innerText = '⏹️'; window.speechSynthesis.speak(utterance); }
+    function toggleAccordion(button) { const item = button.parentElement; const isOpen = item.classList.contains('open'); document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open')); if (!isOpen) item.classList.add('open'); }
+    function toggleAccordionAudio(event, btnElem) { event.stopPropagation(); const item = btnElem.closest('.accordion-item'); if (!item.classList.contains('open')) { document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open')); item.classList.add('open'); } readGenericText(item.querySelector('.accordion-content').innerText, btnElem); item.classList.add('speaking'); }
+    function toggleAccordionLibras(event, btnElem) { event.stopPropagation(); const item = btnElem.closest('.accordion-item'); if (!item.classList.contains('open')) { document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open')); item.classList.add('open'); } window.toggleGlosaText(item.querySelector('.accordion-content').innerText, item.querySelector('.accordion-content')); }
+    function toggleAudioForParagraph(pText, pElem, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese não suportada."); if (currentSpeakingPElem === pElem && window.speechSynthesis.speaking) { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(pText); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = state.voiceSettings.pitch; utterance.rate = state.voiceSettings.rate; utterance.volume = state.voiceSettings.volume; } else utterance.rate = 0.95; utterance.onend = () => { pElem.classList.remove('speaking'); if (btnElem) btnElem.innerText = '🔊'; currentSpeakingPElem = null; if (state.voiceSettings?.autoAdvance) { const parentMsg = pElem.closest('.message'); if (parentMsg) { const paragraphs = Array.from(parentMsg.querySelectorAll('.paragraph-item')); const currentIndex = paragraphs.indexOf(pElem); if (currentIndex !== -1 && currentIndex < paragraphs.length - 1) { const nextPElem = paragraphs[currentIndex + 1]; let nextBtnElem = null; nextPElem.querySelectorAll('.access-btn').forEach(b => { if(b.innerText === '🔊') nextBtnElem = b; }); setTimeout(() => { toggleAudioForParagraph(nextPElem.querySelector('.paragraph-text').innerText, nextPElem, nextBtnElem); }, 250); } } } }; utterance.onerror = () => resetAudioState(); pElem.classList.add('speaking'); if (btnElem) btnElem.innerText = '⏹️'; currentSpeakingPElem = pElem; window.speechSynthesis.speak(utterance); }
+    function handleFileUpload(event) { const file = event.target.files[0]; if (!file) return; appendMessage(`[Anexo Enviado: ${file.name}]`, 'user'); const reader = new FileReader(); reader.onloadend = () => { processUserMessage(`Acabei de anexar um arquivo chamado "${file.name}". Por favor, verifique o conteúdo.`, reader.result, file.type); }; reader.readAsDataURL(file); }
 
-    /* --- V4.1 ROTEADOR MULTIMODAL COM ANCORAGEM TEMPORAL --- */
+    /* ROTEADOR MULTIMODAL (ANCORAGEM TEMPORAL) */
     async function processUserMessageWithCascade(userText, mediaPayload, mimeType) {
-      const txt = userText.toUpperCase();
-      let suggestedCBT = null;
-      
-      const hasPhysical = /\b(CORAÇÃO|RESPIRAR|FALTA DE AR|DOR|PÂNICO|SUOR|TREMOR)\b/.test(txt);
-      const hasSensory = /\b(BARULHO|CABEÇA|PENSAMENTO|MUITO|SOBRECARGA|CONFUSÃO|GRITO)\b/.test(txt);
-      const hasArt = /\b(DESENHAR|ARTE|DISTRAIR|PINTAR|DESENHO)\b/.test(txt);
+      const txt = userText.toUpperCase(); let suggestedCBT = null;
+      if (/\b(CORAÇÃO|RESPIRAR|FALTA DE AR|DOR|PÂNICO|SUOR|TREMOR)\b/.test(txt) || currentEmotionalState === "ALERTA_PÂNICO") suggestedCBT = 'crise_fisica';
+      else if (/\b(BARULHO|CABEÇA|PENSAMENTO|MUITO|SOBRECARGA|CONFUSÃO|GRITO)\b/.test(txt)) suggestedCBT = 'sobrecarga_sensorial';
+      else if (/\b(DESENHAR|ARTE|DISTRAIR|PINTAR|DESENHO)\b/.test(txt)) suggestedCBT = 'redirecionar_arteterapia';
 
-      if (hasPhysical || currentEmotionalState === "ALERTA_PÂNICO") suggestedCBT = 'crise_fisica';
-      else if (hasSensory) suggestedCBT = 'sobrecarga_sensorial';
-      else if (hasArt) suggestedCBT = 'redirecionar_arteterapia';
-
-      // NÍVEL 1: NUVEM
       if (navigator.onLine) {
         try {
           const controller = new AbortController(); const timeoutId = setTimeout(() => controller.abort(), 12000); 
           const payload = { message: userText, history: state.session_history };
           if (mediaPayload) { payload.media = mediaPayload; payload.mimeType = mimeType || "video/webm"; }
-
-          const response = await fetch(API_BACKEND_URL, {
-            method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), signal: controller.signal
-          });
+          const response = await fetch(API_BACKEND_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), signal: controller.signal });
           clearTimeout(timeoutId);
-          if (response.ok) {
-            const data = await response.json(); return { text: data.response || "Estou aqui com você.", source: 'NUVEM', suggestedCBT };
-          }
+          if (response.ok) { const data = await response.json(); return { text: data.response || "Estou aqui com você.", source: 'NUVEM', suggestedCBT }; }
         } catch (error) { console.warn("Nível 1 (Nuvem) falhou ou demorou demais."); }
       }
 
-      // NÍVEL 2: IA NATIVA DO BROWSER
       if (window.ai && window.ai.languageModel) {
         try {
           const capabilities = await window.ai.languageModel.capabilities();
           if (capabilities.available !== 'no') {
-            const session = await window.ai.languageModel.create({ systemPrompt: "Aja como um assistente de saúde mental empático e curto." });
+            const session = await window.ai.languageModel.create({ systemPrompt: "Aja como assistente empático curto." });
             const result = await session.prompt(userText); return { text: result, source: 'NATIVA_HARDWARE', suggestedCBT };
           }
-        } catch (error) { console.warn("Nível 2 (Nativa) falhou."); }
+        } catch (error) { console.warn("Nível 2 falhou."); }
       }
 
-      // NÍVEL 3: IA CACHE LOCAL (WebLLM) com Ancoragem Temporal
       if (window.offlineAIEngine && window.offlineAIEngine.isLoaded && window.offlineAIEngine.engine) {
         try {
           const currentTime = new Date().toLocaleString('pt-BR');
           let historyContext = state.session_history.map(msg => `[${msg.time || 'Anterior'}] ${msg.sender === 'user' ? 'Paciente' : 'Aquele Abraço'}: ${msg.text}`).join('\n');
-          
-          const systemPrompt = `Você é o 'Aquele Abraço', um assistente empático de saúde mental. Data e hora atual: ${currentTime}.\nContexto temporal da conversa:\n${historyContext}\n\nO usuário pode digitar em Português ou em GLOSA. Se for em GLOSA, compreenda o contexto imediatamente. Sua resposta deve ser acolhedora, curta e simples. Evite repetições.`;
-          
+          const systemPrompt = `Você é o 'Aquele Abraço', assistente de saúde mental. Data/hora: ${currentTime}.\nContexto temporal:\n${historyContext}\n\nO usuário pode digitar em Português ou GLOSA. Responda com empatia e evite repetições absurdas.`;
           const result = await window.offlineAIEngine.engine.chat.completions.create({
             messages: [{ role: "system", content: systemPrompt }, { role: "user", content: `[${currentTime}] Paciente: ${userText}` }]
           });
           return { text: result.choices[0].message.content, source: 'WEBLLM_CACHE', suggestedCBT };
-        } catch (error) { console.warn("Nível 3 (Cache WebLLM) falhou na inferência."); }
+        } catch (error) { console.warn("Nível 3 falhou."); }
       }
 
-      // NÍVEL 4: CHATBOT TCC DE EMERGÊNCIA
       if (navigator.onLine) {
          let fallbackText = `Estou conectando aos meus servidores e pode levar um instante, mas eu não vou deixar você sozinho. Enquanto processo, pode continuar me contando como se sente?\n\n[GLOSA]: EU OUVIR. INTERNET LENTA. EU AQUI.`;
          if (suggestedCBT === 'crise_fisica') fallbackText = `Percebi que seu corpo está reagindo. Minha conexão principal está lenta, mas eu estou com você. Quer tentar uma técnica rápida para se acalmar?\n\n[GLOSA]: EU VER CORPO NERVOSO. EU AQUI. NÓS ACALMAR.`;
@@ -961,11 +701,10 @@
              const respostasGenericas = [
                  "Estou operando no modo de segurança sem internet. Eu te ouço, mas minhas respostas estão um pouco limitadas agora. Quer tentar alguma ferramenta do aplicativo?",
                  "Entendi o que você disse. Sem internet, meu cérebro principal está dormindo, mas eu continuo aqui para te dar suporte. Como posso ajudar?",
-                 "Estou aqui com você. Minha conexão caiu, então não consigo gerar histórias longas ou textos complexos agora, mas nossas ferramentas terapêuticas continuam funcionando.",
+                 "Estou aqui com você. Minha conexão caiu, então não consigo gerar textos longos agora, mas nossas ferramentas terapêuticas continuam funcionando.",
                  "Sua mensagem chegou até mim. No modo offline, sou um ouvinte mais silencioso. Quer tentar fazer um desenho ou ouvir um som relaxante para passar o tempo?"
              ];
              fallbackText = respostasGenericas[Math.floor(Math.random() * respostasGenericas.length)];
-             suggestedCBT = null;
          }
          return { text: fallbackText, source: 'TCC_CHATBOT', suggestedCBT }; 
       }
@@ -996,14 +735,7 @@
       appendMessage(cleanText, 'assistant', true, result.suggestedCBT);
 
       if (glosaText || cleanText.includes('GLOSA')) {
-        setTimeout(() => {
-          const msgs = document.querySelectorAll('.message.assistant .paragraph-item');
-          if (msgs.length > 0) {
-             const lastMsg = msgs[msgs.length - 1];
-             const pText = lastMsg.querySelector('.paragraph-text').innerText;
-             window.toggleGlosaText(pText, lastMsg);
-          }
-        }, 1000);
+        setTimeout(() => { const msgs = document.querySelectorAll('.message.assistant .paragraph-item'); if (msgs.length > 0) window.toggleGlosaText(msgs[msgs.length - 1].querySelector('.paragraph-text').innerText, msgs[msgs.length - 1]); }, 1000);
       }
     }
 
@@ -1042,7 +774,6 @@
       } else { msgDiv.innerText = text; }
       container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
       
-      // V4.1: Salva o timestamp invisível
       const timeStr = new Date().toLocaleString('pt-BR');
       if (save) { state.session_history.push({ text, sender, time: timeStr }); saveState(); }
     }
@@ -1051,12 +782,6 @@
     function loadState() { const saved = localStorage.getItem('aquele_abraco_state'); if (saved) { try { const parsed = JSON.parse(saved); state = { ...state, ...parsed }; renderHistory(); } catch (e) {} } else renderHistory(); }
     function renderHistory() { const container = document.getElementById('chat-container'); container.innerHTML = ''; appendMessage("Estou aqui com você. Como está seu coração hoje?", 'assistant', false); state.session_history.forEach(msg => appendMessage(msg.text, msg.sender, false)); }
 
-    function initVoices() { if ('speechSynthesis' in window) window.speechSynthesis.onvoiceschanged = () => populateVoices(); }
-    let isListening = false, recognition;
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) { const Speech = window.SpeechRecognition || window.webkitSpeechRecognition; recognition = new Speech(); recognition.lang = 'pt-BR'; recognition.onresult = (e) => { document.getElementById('userInput').value = e.results[0][0].transcript; toggleVoice(); }; recognition.onerror = () => toggleVoice(); }
-    function toggleVoice() { const btn = document.getElementById('voiceBtn'); if (!recognition) return alert('Reconhecimento indisponível.'); if (!isListening) { try { recognition.start(); isListening = true; btn.classList.add('voice-active'); } catch(e) {} } else { recognition.stop(); isListening = false; btn.classList.remove('voice-active'); } }
-    function toggleModal(show) { const modal = document.getElementById('tutorial-modal'); show ? modal.classList.add('active') : modal.classList.remove('active'); }
-    function toggleAccordion(button) { const item = button.parentElement; const isOpen = item.classList.contains('open'); document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open')); if (!isOpen) item.classList.add('open'); }
     function toggleEmojiPicker() { const picker = document.getElementById('emoji-picker-modal'); picker.style.display = picker.style.display === 'flex' ? 'none' : 'flex'; }
     function sendEmoji(emoji) { toggleEmojiPicker(); appendMessage(emoji, 'user'); processUserMessage(emoji); }
     
@@ -1068,9 +793,8 @@
     function startDraw(e) { drawing = true; draw(e); } function stopDraw() { drawing = false; artCtx.beginPath(); }
     function draw(e) { if (!drawing) return; const rect = artCanvas.getBoundingClientRect(); const x = (e.clientX || e.touches[0].clientX) - rect.left; const y = (e.clientY || e.touches[0].clientY) - rect.top; artCtx.lineWidth = currentTool === 'eraser' ? 25 : 3; artCtx.lineCap = 'round'; artCtx.strokeStyle = currentTool === 'eraser' ? getComputedStyle(document.body).getPropertyValue('--bg-color').trim() : strokeColor; if (currentTool === 'spray') { for (let i = 0; i < 10; i++) { artCtx.fillStyle = strokeColor; artCtx.fillRect(x + (Math.random() - 0.5) * 18, y + (Math.random() - 0.5) * 18, 1.5, 1.5); } } else { artCtx.lineTo(x, y); artCtx.stroke(); artCtx.beginPath(); artCtx.moveTo(x, y); } }
 
-    function toggleBackupModal() { const modal = document.getElementById('backup-modal'); modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex'; }
     function exportBackup() { const dataStr = JSON.stringify(state); const encrypted = btoa(unescape(encodeURIComponent(dataStr))); const blob = new Blob([encrypted], { type: 'application/octet-stream' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'registro_pessoal.dat'; a.click(); URL.revokeObjectURL(url); }
-    function importBackup(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(evt) { try { const decrypted = decodeURIComponent(escape(atob(evt.target.result))); const imported = JSON.parse(decrypted); if (imported.internal_header === SECURE_HEADER) { state = { ...state, ...imported }; saveState(); renderHistory(); alert('Registro restaurado com sucesso!'); toggleBackupModal(); } else alert('Arquivo inválido.'); } catch (err) { alert('Erro ao ler arquivo.'); } }; reader.readAsText(file); }
+    function importBackup(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(evt) { try { const decrypted = decodeURIComponent(escape(atob(evt.target.result))); const imported = JSON.parse(decrypted); if (imported.internal_header === SECURE_HEADER) { state = { ...state, ...imported }; saveState(); renderHistory(); alert('Registro restaurado com sucesso!'); closeModal('settings-modal'); } else alert('Arquivo inválido.'); } catch (err) { alert('Erro ao ler arquivo.'); } }; reader.readAsText(file); }
   </script>
 
   <!-- ATIVADOR DO PWA E SW -->
@@ -1083,7 +807,7 @@
               const newWorker = reg.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  if (confirm("Uma nova atualização do Aquele Abraço (V4.1) está disponível! Deseja aplicar as correções agora?")) {
+                  if (confirm("Uma nova atualização do Aquele Abraço (V4.3) está disponível! Deseja aplicar as correções agora?")) {
                     newWorker.postMessage({ action: 'skipWaiting' });
                     window.location.reload();
                   }
@@ -1091,7 +815,7 @@
               });
             });
           })
-          .catch((err) => console.log('PWA: Falha ao registrar Service Worker:', err));
+          .catch((err) => console.log('PWA: Falha ao SW:', err));
       });
     }
   </script>
