@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aquele Abraço 3.9 (Empathetic AI Fix)</title>
+  <title>Aquele Abraço 4.1 (Temporal Grounding Edition)</title>
 
   <!-- PWA META TAGS -->
   <link rel="manifest" href="manifest.json">
@@ -318,6 +318,9 @@
     </div>
 
     <div class="header-actions">
+      <!-- V4.1 BOTÃO DE LIMPEZA DE MEMÓRIA E HISTÓRICO -->
+      <button class="icon-btn" onclick="clearChatMemory()" title="Limpar Conversa (Reset)">🧹</button>
+      
       <button class="icon-btn" onclick="triggerPanicLock()" title="Modo Escudo (Tranca Rápida)">🛡️</button>
       <button class="icon-btn" onclick="toggleModal(true)" title="Como Funciona & Bastidores">❓</button>
       <button class="icon-btn" onclick="toggleAudioPanel()" title="Frequências Terapêuticas">🎧</button>
@@ -583,7 +586,6 @@
       </div>
       <p id="backup-desc" style="font-size: 0.8rem; color: #888; margin-top:5px; margin-bottom:15px;">Soberania e Privacidade. Guarde seu registro criptografado no seu aparelho com total segurança.</p>
       
-      <!-- BOTÃO DE DOWNLOAD COM PROTEÇÃO -->
       <button id="download-ai-btn" onclick="downloadRealAI()" style="background:#0984e3; color:white; font-weight:bold; margin-bottom: 8px;">🧠 Baixar Assistente Offline</button>
 
       <button onclick="exportBackup()">Exportar Registro Criptografado</button>
@@ -648,6 +650,19 @@
       }
     }
 
+    /* V4.1: FUNÇÃO DE LIMPEZA DE MEMÓRIA (RESET DA IA) */
+    window.clearChatMemory = function() {
+      if(confirm("Tem certeza que deseja apagar toda a sua conversa? Isso limpará a memória da Inteligência Artificial e garantirá sua privacidade, mas não poderá ser desfeito.")) {
+        state.session_history = [];
+        saveState();
+        renderHistory();
+        currentEmotionalState = "ESTÁVEL";
+        const inputElem = document.getElementById('userInput');
+        if (inputElem) inputElem.style.borderColor = "var(--border-color)";
+        showToast("🧹 Memória apagada e conversa reiniciada com sucesso.");
+      }
+    }
+
     /* TRADUTOR LOCAL GLOSA ESTRUTURAL */
     window.toggleGlosaText = function(text, parentElem) {
       let glosaBox = parentElem.querySelector('.glosa-box');
@@ -669,7 +684,7 @@
       }
     }
 
-    /* --- V3.9 DOWNLOAD REAL COM AVISO DE SEGURANÇA E HARDWARE (ACOLHEDOR) --- */
+    /* DOWNLOAD REAL COM AVISO DE SEGURANÇA E HARDWARE */
     window.downloadRealAI = async function() {
       if (!navigator.gpu) {
         alert("Sabe, acabei de checar e o seu aparelho não suporta essa Inteligência Artificial mais pesada. Mas não precisa se preocupar, de verdade! O meu 'Escudo de Proteção' já está ativado e vai continuar cuidando de você sempre que faltar internet.");
@@ -696,7 +711,6 @@
         window.offlineAIEngine.engine = await CreateMLCEngine(selectedModel, { initProgressCallback: initProgressCallback });
         window.offlineAIEngine.isLoaded = true;
         
-        // MARCADOR DE SEGURANÇA: Salva que o usuário já consentiu e baixou
         localStorage.setItem('ia_offline_instalada', 'true');
 
         btn.innerText = "🧠 IA Offline Instalada"; btn.style.background = "#2ed573"; btn.style.color = "white";
@@ -731,7 +745,6 @@
     window.onload = () => {
       registrarTelemetria(); loadState(); initCanvas(); initVoices(); initVLibras(); initMicroExpressionEngine(); initNetworkMonitor();
       
-      // Atualiza visual do botão caso a IA já tenha sido instalada antes
       if (localStorage.getItem('ia_offline_instalada') === 'true') {
          const btn = document.getElementById('download-ai-btn');
          if(btn) { btn.innerText = "🧠 IA Offline Instalada"; btn.style.background = "#2ed573"; btn.style.color = "white"; btn.disabled = true; }
@@ -741,7 +754,6 @@
         logoAnchor.appendChild(heroWrapper); heroWrapper.classList.add('minimized');
         brandTitle.classList.add('visible'); chatContainer.classList.add('visible');
         
-        // SÓ carrega a IA no background se o usuário já tiver baixado voluntariamente antes!
         if (localStorage.getItem('ia_offline_instalada') === 'true') {
             import('https://esm.run/@mlc-ai/web-llm').then(async (webllm) => {
               try {
@@ -867,7 +879,6 @@
     function play852Hz() { initSynthAudio(); stopSyntheticAudio(); const osc = synthAudioCtx.createOscillator(); const gain = synthAudioCtx.createGain(); osc.type = 'sine'; osc.frequency.value = 852; gain.gain.setValueAtTime(0, synthAudioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.15, synthAudioCtx.currentTime + 2); osc.connect(gain); gain.connect(synthAudioCtx.destination); osc.start(); synthNodes.push(osc); }
     function playAcoustic(track) { const player = document.getElementById('ambientPlayer'); player.pause(); stopSyntheticAudio(); if (track === 'chuva') playRain(); else if (track === 'binaural') playBinaural(); else if (track === 'reset') play852Hz(); else if (track === 'mindfulness') { player.src = 'https://ice1.somafm.com/dronezone-128-mp3'; player.volume = 0.2; player.play().catch(e => console.log("Áudio bloqueado.")); } }
     function stopAcoustic() { const player = document.getElementById('ambientPlayer'); player.pause(); stopSyntheticAudio(); }
-    
     function resetAudioState() { document.querySelectorAll('.paragraph-item').forEach(p => p.classList.remove('speaking')); document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('speaking')); document.querySelectorAll('.access-btn').forEach(b => { if(b.innerText === '⏹️') b.innerText = '🔊'; }); currentSpeakingPElem = null; currentSpeakingAccordionBtn = null; }
     function readGenericText(text, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada."); if (window.speechSynthesis.speaking && btnElem.innerText === '⏹️') { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0); utterance.rate = parseFloat(state.voiceSettings.rate || 0.95); utterance.volume = parseFloat(state.voiceSettings.volume || 1.0); } else utterance.rate = 0.95; utterance.onend = () => resetAudioState(); utterance.onerror = () => resetAudioState(); btnElem.innerText = '⏹️'; window.speechSynthesis.speak(utterance); }
     function toggleAccordionAudio(event, btnElem) { event.stopPropagation(); const accordionItem = btnElem.closest('.accordion-item'); const textToRead = accordionItem.querySelector('.accordion-content').innerText; if (!accordionItem.classList.contains('open')) { document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open')); accordionItem.classList.add('open'); } readGenericText(textToRead, btnElem); accordionItem.classList.add('speaking'); }
@@ -880,7 +891,7 @@
     function toggleAudioForParagraph(pText, pElem, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada."); if (currentSpeakingPElem === pElem && window.speechSynthesis.speaking) { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(pText); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0); utterance.rate = parseFloat(state.voiceSettings.rate || 0.95); utterance.volume = parseFloat(state.voiceSettings.volume || 1.0); } else utterance.rate = 0.95; utterance.onend = () => { pElem.classList.remove('speaking'); if (btnElem) btnElem.innerText = '🔊'; currentSpeakingPElem = null; const autoAdvance = state.voiceSettings ? state.voiceSettings.autoAdvance : true; if (autoAdvance) { const parentMsg = pElem.closest('.message'); if (parentMsg) { const paragraphs = Array.from(parentMsg.querySelectorAll('.paragraph-item')); const currentIndex = paragraphs.indexOf(pElem); if (currentIndex !== -1 && currentIndex < paragraphs.length - 1) { const nextPElem = paragraphs[currentIndex + 1]; const nextBtnElems = nextPElem.querySelectorAll('.access-btn'); let nextBtnElem = null; nextBtnElems.forEach(b => { if(b.innerText === '🔊') nextBtnElem = b; }); const nextText = nextPElem.querySelector('.paragraph-text').innerText; setTimeout(() => { toggleAudioForParagraph(nextText, nextPElem, nextBtnElem); }, 250); } } } }; utterance.onerror = () => resetAudioState(); pElem.classList.add('speaking'); if (btnElem) btnElem.innerText = '⏹️'; currentSpeakingPElem = pElem; window.speechSynthesis.speak(utterance); }
     function handleFileUpload(event) { const file = event.target.files[0]; if (!file) return; appendMessage(`[Anexo Enviado: ${file.name}]`, 'user'); const reader = new FileReader(); reader.onloadend = () => { const fileBase64 = reader.result; processUserMessage(`Acabei de anexar um arquivo chamado "${file.name}". Por favor, verifique o conteúdo dele e responda apropriadamente.`, fileBase64, file.type); }; reader.readAsDataURL(file); }
 
-    /* ROTEADOR MULTIMODAL */
+    /* --- V4.1 ROTEADOR MULTIMODAL COM ANCORAGEM TEMPORAL --- */
     async function processUserMessageWithCascade(userText, mediaPayload, mimeType) {
       const txt = userText.toUpperCase();
       let suggestedCBT = null;
@@ -893,6 +904,7 @@
       else if (hasSensory) suggestedCBT = 'sobrecarga_sensorial';
       else if (hasArt) suggestedCBT = 'redirecionar_arteterapia';
 
+      // NÍVEL 1: NUVEM
       if (navigator.onLine) {
         try {
           const controller = new AbortController(); const timeoutId = setTimeout(() => controller.abort(), 12000); 
@@ -909,6 +921,7 @@
         } catch (error) { console.warn("Nível 1 (Nuvem) falhou ou demorou demais."); }
       }
 
+      // NÍVEL 2: IA NATIVA DO BROWSER
       if (window.ai && window.ai.languageModel) {
         try {
           const capabilities = await window.ai.languageModel.capabilities();
@@ -919,16 +932,22 @@
         } catch (error) { console.warn("Nível 2 (Nativa) falhou."); }
       }
 
+      // NÍVEL 3: IA CACHE LOCAL (WebLLM) com Ancoragem Temporal
       if (window.offlineAIEngine && window.offlineAIEngine.isLoaded && window.offlineAIEngine.engine) {
         try {
-          const systemPrompt = `Você é o 'Aquele Abraço', um assistente empático de saúde mental. O usuário pode digitar em Português ou em GLOSA. Se for em GLOSA (ex: "EU TRISTE CORAÇÃO ACELERADO RESPIRAR RUIM"), compreenda o contexto imediatamente. Sua resposta deve ser acolhedora e simples.`;
+          const currentTime = new Date().toLocaleString('pt-BR');
+          let historyContext = state.session_history.map(msg => `[${msg.time || 'Anterior'}] ${msg.sender === 'user' ? 'Paciente' : 'Aquele Abraço'}: ${msg.text}`).join('\n');
+          
+          const systemPrompt = `Você é o 'Aquele Abraço', um assistente empático de saúde mental. Data e hora atual: ${currentTime}.\nContexto temporal da conversa:\n${historyContext}\n\nO usuário pode digitar em Português ou em GLOSA. Se for em GLOSA, compreenda o contexto imediatamente. Sua resposta deve ser acolhedora, curta e simples. Evite repetições.`;
+          
           const result = await window.offlineAIEngine.engine.chat.completions.create({
-            messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userText }]
+            messages: [{ role: "system", content: systemPrompt }, { role: "user", content: `[${currentTime}] Paciente: ${userText}` }]
           });
           return { text: result.choices[0].message.content, source: 'WEBLLM_CACHE', suggestedCBT };
         } catch (error) { console.warn("Nível 3 (Cache WebLLM) falhou na inferência."); }
       }
 
+      // NÍVEL 4: CHATBOT TCC DE EMERGÊNCIA
       if (navigator.onLine) {
          let fallbackText = `Estou conectando aos meus servidores e pode levar um instante, mas eu não vou deixar você sozinho. Enquanto processo, pode continuar me contando como se sente?\n\n[GLOSA]: EU OUVIR. INTERNET LENTA. EU AQUI.`;
          if (suggestedCBT === 'crise_fisica') fallbackText = `Percebi que seu corpo está reagindo. Minha conexão principal está lenta, mas eu estou com você. Quer tentar uma técnica rápida para se acalmar?\n\n[GLOSA]: EU VER CORPO NERVOSO. EU AQUI. NÓS ACALMAR.`;
@@ -1022,7 +1041,10 @@
         }
       } else { msgDiv.innerText = text; }
       container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
-      if (save) { state.session_history.push({ text, sender }); saveState(); }
+      
+      // V4.1: Salva o timestamp invisível
+      const timeStr = new Date().toLocaleString('pt-BR');
+      if (save) { state.session_history.push({ text, sender, time: timeStr }); saveState(); }
     }
 
     function saveState() { localStorage.setItem('aquele_abraco_state', JSON.stringify(state)); }
@@ -1061,7 +1083,7 @@
               const newWorker = reg.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  if (confirm("Uma nova atualização do Aquele Abraço (V3.9) está disponível! Deseja aplicar as correções agora?")) {
+                  if (confirm("Uma nova atualização do Aquele Abraço (V4.1) está disponível! Deseja aplicar as correções agora?")) {
                     newWorker.postMessage({ action: 'skipWaiting' });
                     window.location.reload();
                   }
