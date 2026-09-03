@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aquele Abraço 3.6 (Hardware Diagnostics)</title>
+  <title>Aquele Abraço 3.7 (Empathetic AI Edition)</title>
 
   <!-- PWA META TAGS -->
   <link rel="manifest" href="manifest.json">
@@ -183,7 +183,7 @@
     .cbt-inline-btn { padding: 10px; border: 1px solid var(--primary-color); border-radius: 8px; background: var(--bg-color); color: var(--text-color); font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s; display: flex; align-items: center; gap: 8px;}
     .cbt-inline-btn:active { background: rgba(0,0,0,0.05); transform: scale(0.98); }
 
-    /* CONTROLES E INPUT */
+    /* CONTROLES E INPUT (SEMPRE VISÍVEIS) */
     .input-area {
       background-color: var(--card-bg); padding: 10px 15px 15px;
       border-top: 1px solid var(--border-color); flex-shrink: 0;
@@ -589,7 +589,7 @@
       </div>
       <p id="backup-desc" style="font-size: 0.8rem; color: #888; margin-top:5px; margin-bottom:15px;">Soberania e Privacidade. Guarde seu registro criptografado no seu aparelho com total segurança.</p>
       
-      <button id="download-ai-btn" onclick="downloadRealAI()" style="background:#0984e3; color:white; font-weight:bold; margin-bottom: 8px;">🧠 Baixar Assistente Offline (~600MB)</button>
+      <button id="download-ai-btn" onclick="downloadRealAI()" style="background:#0984e3; color:white; font-weight:bold; margin-bottom: 8px;">🧠 Baixar Assistente Offline</button>
 
       <button onclick="exportBackup()">Exportar Registro Criptografado</button>
       <label for="importFile" style="margin-top: 8px;">Restaurar Registro</label>
@@ -674,26 +674,38 @@
       }
     }
 
-    /* --- DOWNLOAD REAL DO WEBLLM --- */
+    /* --- V3.7: DOWNLOAD REAL COM AVISO DE SEGURANÇA E HARDWARE (ACOLHEDOR) --- */
     window.downloadRealAI = async function() {
+      if (!navigator.gpu) {
+        alert("Sabe, acabei de checar e o sistema do seu aparelho ainda não suporta o formato dessa Inteligência Artificial mais pesada.\n\nMas não precisa se preocupar, de verdade! O meu 'Escudo de Proteção' já está ativado e vai continuar cuidando de você sempre que faltar internet.");
+        return;
+      }
+
+      const msg = "Para eu poder conversar profundamente com você mesmo quando a internet cair, preciso criar um cantinho seguro aqui no seu celular.\n\nComo esse meu 'cérebro' pesa cerca de 600MB, peço que você use uma rede Wi-Fi para não gastar os seus dados móveis, tá bom?\n\nPodemos iniciar o download agora?";
+      
+      if (!confirm(msg)) {
+        return; 
+      }
+
       const btn = document.getElementById('download-ai-btn');
-      btn.innerText = "Preparando motor..."; btn.style.background = "#fdcb6e"; btn.style.color = "#333"; btn.disabled = true;
+      btn.innerText = "Preparando o meu cérebro..."; btn.style.background = "#fdcb6e"; btn.style.color = "#333"; btn.disabled = true;
 
       try {
         const { CreateMLCEngine } = await import('https://esm.run/@mlc-ai/web-llm');
         const initProgressCallback = (initProgress) => {
           const prog = Math.round(initProgress.progress * 100);
-          btn.innerText = `Baixando IA: ${prog}% (Aguarde)`;
+          btn.innerText = `Baixando: ${prog}% (Fica comigo, já acaba)`;
         };
         const selectedModel = "TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC";
         window.offlineAIEngine.engine = await CreateMLCEngine(selectedModel, { initProgressCallback: initProgressCallback });
         window.offlineAIEngine.isLoaded = true;
         
         btn.innerText = "🧠 IA Offline Instalada"; btn.style.background = "#2ed573"; btn.style.color = "white";
-        alert("Inteligência Artificial instalada no dispositivo! O chat funcionará sem internet.");
+        alert("Tudo pronto! Meu assistente offline foi instalado com sucesso e já posso conversar com você sem internet.");
         updateNetworkStatus();
       } catch (error) {
-        btn.innerText = "Erro ao baixar (Tente no Wi-Fi)"; btn.style.background = "#e17055"; btn.style.color = "white"; btn.disabled = false;
+        console.error(error);
+        btn.innerText = "Erro ao baixar (Tente com Wi-Fi)"; btn.style.background = "#e17055"; btn.style.color = "white"; btn.disabled = false;
       }
     };
 
@@ -849,7 +861,7 @@
     function play852Hz() { initSynthAudio(); stopSyntheticAudio(); const osc = synthAudioCtx.createOscillator(); const gain = synthAudioCtx.createGain(); osc.type = 'sine'; osc.frequency.value = 852; gain.gain.setValueAtTime(0, synthAudioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.15, synthAudioCtx.currentTime + 2); osc.connect(gain); gain.connect(synthAudioCtx.destination); osc.start(); synthNodes.push(osc); }
     function playAcoustic(track) { const player = document.getElementById('ambientPlayer'); player.pause(); stopSyntheticAudio(); if (track === 'chuva') playRain(); else if (track === 'binaural') playBinaural(); else if (track === 'reset') play852Hz(); else if (track === 'mindfulness') { player.src = 'https://ice1.somafm.com/dronezone-128-mp3'; player.volume = 0.2; player.play().catch(e => console.log("Áudio bloqueado.")); } }
     function stopAcoustic() { const player = document.getElementById('ambientPlayer'); player.pause(); stopSyntheticAudio(); }
-
+    
     function resetAudioState() { document.querySelectorAll('.paragraph-item').forEach(p => p.classList.remove('speaking')); document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('speaking')); document.querySelectorAll('.access-btn').forEach(b => { if(b.innerText === '⏹️') b.innerText = '🔊'; }); currentSpeakingPElem = null; currentSpeakingAccordionBtn = null; }
     function readGenericText(text, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada."); if (window.speechSynthesis.speaking && btnElem.innerText === '⏹️') { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0); utterance.rate = parseFloat(state.voiceSettings.rate || 0.95); utterance.volume = parseFloat(state.voiceSettings.volume || 1.0); } else utterance.rate = 0.95; utterance.onend = () => resetAudioState(); utterance.onerror = () => resetAudioState(); btnElem.innerText = '⏹️'; window.speechSynthesis.speak(utterance); }
     function toggleAccordionAudio(event, btnElem) { event.stopPropagation(); const accordionItem = btnElem.closest('.accordion-item'); const textToRead = accordionItem.querySelector('.accordion-content').innerText; if (!accordionItem.classList.contains('open')) { document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open')); accordionItem.classList.add('open'); } readGenericText(textToRead, btnElem); accordionItem.classList.add('speaking'); }
@@ -860,10 +872,11 @@
     }
     
     function toggleAudioForParagraph(pText, pElem, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada."); if (currentSpeakingPElem === pElem && window.speechSynthesis.speaking) { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(pText); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0); utterance.rate = parseFloat(state.voiceSettings.rate || 0.95); utterance.volume = parseFloat(state.voiceSettings.volume || 1.0); } else utterance.rate = 0.95; utterance.onend = () => { pElem.classList.remove('speaking'); if (btnElem) btnElem.innerText = '🔊'; currentSpeakingPElem = null; const autoAdvance = state.voiceSettings ? state.voiceSettings.autoAdvance : true; if (autoAdvance) { const parentMsg = pElem.closest('.message'); if (parentMsg) { const paragraphs = Array.from(parentMsg.querySelectorAll('.paragraph-item')); const currentIndex = paragraphs.indexOf(pElem); if (currentIndex !== -1 && currentIndex < paragraphs.length - 1) { const nextPElem = paragraphs[currentIndex + 1]; const nextBtnElems = nextPElem.querySelectorAll('.access-btn'); let nextBtnElem = null; nextBtnElems.forEach(b => { if(b.innerText === '🔊') nextBtnElem = b; }); const nextText = nextPElem.querySelector('.paragraph-text').innerText; setTimeout(() => { toggleAudioForParagraph(nextText, nextPElem, nextBtnElem); }, 250); } } } }; utterance.onerror = () => resetAudioState(); pElem.classList.add('speaking'); if (btnElem) btnElem.innerText = '⏹️'; currentSpeakingPElem = pElem; window.speechSynthesis.speak(utterance); }
-    function handleFileUpload(event) { const file = event.target.files[0]; if (!file) return; appendMessage(`[Anexo Enviado: ${file.name}]`, 'user'); const reader = new FileReader(); reader.onloadend = () => { const fileBase64 = reader.result; processUserMessage(`Acabei de anexar arquivo "${file.name}".`, fileBase64, file.type); }; reader.readAsDataURL(file); }
+    function handleFileUpload(event) { const file = event.target.files[0]; if (!file) return; appendMessage(`[Anexo Enviado: ${file.name}]`, 'user'); const reader = new FileReader(); reader.onloadend = () => { const fileBase64 = reader.result; processUserMessage(`Acabei de anexar um arquivo chamado "${file.name}". Por favor, verifique o conteúdo dele e responda apropriadamente.`, fileBase64, file.type); }; reader.readAsDataURL(file); }
 
-    /* --- V3.6: ROTEADOR IA COM DIAGNÓSTICO DE HARDWARE --- */
+    /* --- V3.5 ROTEADOR MULTIMODAL (FILTRO DE PALAVRAS EXATO FIX) --- */
     async function processUserMessageWithCascade(userText, mediaPayload, mimeType) {
+      
       const txt = userText.toUpperCase();
       let suggestedCBT = null;
       
@@ -871,9 +884,13 @@
       const hasSensory = /\b(BARULHO|CABEÇA|PENSAMENTO|MUITO|SOBRECARGA|CONFUSÃO|GRITO)\b/.test(txt);
       const hasArt = /\b(DESENHAR|ARTE|DISTRAIR|PINTAR|DESENHO)\b/.test(txt);
 
-      if (hasPhysical || currentEmotionalState === "ALERTA_PÂNICO") suggestedCBT = 'crise_fisica';
-      else if (hasSensory) suggestedCBT = 'sobrecarga_sensorial';
-      else if (hasArt) suggestedCBT = 'redirecionar_arteterapia';
+      if (hasPhysical || currentEmotionalState === "ALERTA_PÂNICO") {
+          suggestedCBT = 'crise_fisica';
+      } else if (hasSensory) {
+          suggestedCBT = 'sobrecarga_sensorial';
+      } else if (hasArt) {
+          suggestedCBT = 'redirecionar_arteterapia';
+      }
 
       // NÍVEL 1: NUVEM
       if (navigator.onLine) {
@@ -895,7 +912,7 @@
         } catch (error) { console.warn("Nível 1 (Nuvem) falhou ou demorou demais."); }
       }
 
-      // NÍVEL 2: IA NATIVA DO BROWSER
+      // NÍVEL 2: IA NATIVA DO BROWSER (window.ai)
       if (window.ai && window.ai.languageModel) {
         try {
           const capabilities = await window.ai.languageModel.capabilities();
@@ -915,18 +932,14 @@
             messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userText }]
           });
           return { text: result.choices[0].message.content, source: 'WEBLLM_CACHE', suggestedCBT };
-        } catch (error) { 
-          console.warn("Nível 3 (Cache WebLLM) falhou na inferência (OOM/WebGPU Error).", error); 
-          // FIX: DIAGNÓSTICO CLARO PARA O USUÁRIO DE HARDWARE FAIL
-          let fallbackText = `Tentei usar a Inteligência Artificial que baixamos, mas o processador deste aparelho atingiu o limite de memória (WebGPU limit) e abortou a operação para não travar o celular. Estou assumindo no modo de segurança.\n\n[GLOSA]: CELULAR NÃO AGUENTAR IA PESADA. EU USAR MODO SEGURO. EU AQUI.`;
-          return { text: fallbackText, source: 'TCC_CHATBOT', suggestedCBT: suggestedCBT || 'crise_fisica' };
-        }
+        } catch (error) { console.warn("Nível 3 (Cache WebLLM) falhou."); }
       }
 
-      // NÍVEL 4: CHATBOT TCC DE EMERGÊNCIA
+      // NÍVEL 4: CHATBOT TCC DE EMERGÊNCIA (INTELIGÊNCIA DE CONTEXTO)
       if (navigator.onLine) {
-         let fallbackText = `Estou conectando aos meus servidores e pode levar um instante, mas não vou deixar você sozinho. Pode continuar me contando como se sente?\n\n[GLOSA]: EU OUVIR. INTERNET LENTA. EU AQUI.`;
+         let fallbackText = `Estou conectando aos meus servidores e pode levar um instante, mas eu não vou deixar você sozinho. Enquanto processo, pode continuar me contando como se sente?\n\n[GLOSA]: EU OUVIR. INTERNET LENTA. EU AQUI.`;
          if (suggestedCBT === 'crise_fisica') fallbackText = `Percebi que seu corpo está reagindo. Minha conexão principal está lenta, mas eu estou com você. Quer tentar uma técnica rápida para se acalmar?\n\n[GLOSA]: EU VER CORPO NERVOSO. EU AQUI. NÓS ACALMAR.`;
+         
          return { text: fallbackText, source: 'NUVEM_TIMEOUT', suggestedCBT };
       } else {
          let fallbackText = "";
@@ -938,14 +951,15 @@
              fallbackText = `Entendi perfeitamente. Às vezes, imagens falam mais que palavras. Quer tentar desenhar?\n\n[GLOSA]: PALAVRA DIFÍCIL AGORA. VOCÊ DESENHAR SENTIMENTO.`;
          } else {
              const respostasGenericas = [
-                 "Estou operando no modo de segurança sem internet. Eu te ouço, mas minhas respostas não podem ser longas agora. Quer tentar alguma ferramenta do aplicativo?",
+                 "Estou operando no modo de segurança sem internet. Eu te ouço, mas minhas respostas estão um pouco limitadas agora. Quer tentar alguma ferramenta do aplicativo?",
                  "Entendi o que você disse. Sem internet, meu cérebro principal está dormindo, mas eu continuo aqui para te dar suporte. Como posso ajudar?",
-                 "Estou aqui com você. Minha conexão caiu, então não consigo conversar sobre muitos assuntos, mas nossas ferramentas terapêuticas continuam funcionando.",
+                 "Estou aqui com você. Minha conexão caiu, então não consigo gerar histórias longas ou textos complexos agora, mas nossas ferramentas terapêuticas continuam funcionando.",
                  "Sua mensagem chegou até mim. No modo offline, sou um ouvinte mais silencioso. Quer tentar fazer um desenho ou ouvir um som relaxante para passar o tempo?"
              ];
              fallbackText = respostasGenericas[Math.floor(Math.random() * respostasGenericas.length)];
              suggestedCBT = null;
          }
+         
          return { text: fallbackText, source: 'TCC_CHATBOT', suggestedCBT }; 
       }
     }
@@ -1061,7 +1075,7 @@
               const newWorker = reg.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  if (confirm("Uma nova atualização do Aquele Abraço (V3.6) está disponível! Deseja aplicar as correções agora?")) {
+                  if (confirm("Uma nova atualização do Aquele Abraço (V3.7) está disponível! Deseja aplicar as correções agora?")) {
                     newWorker.postMessage({ action: 'skipWaiting' });
                     window.location.reload();
                   }
