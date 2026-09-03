@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aquele Abraço 4.3 (Clean UI & Docs Edition)</title>
+  <title>Aquele Abraço 4.4 (Ultra Fast Boot Edition)</title>
 
   <!-- PWA META TAGS -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#fbfbf9">
   <link rel="apple-touch-icon" href="icon-192.png">
+
+  <!-- V4.4 FIX: DEFER no VLibras para nunca mais travar o carregamento da tela -->
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js" defer></script>
 
   <style>
     :root {
@@ -54,7 +57,7 @@
       pointer-events: none; z-index: 999;
     }
 
-    /* CABEÇALHO LIMPO (Apenas 3 botões essenciais) */
+    /* CABEÇALHO LIMPO */
     header {
       padding: 8px 16px;
       display: flex; align-items: center; justify-content: space-between;
@@ -81,7 +84,7 @@
     .badge-offline { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
     .badge-ai-local { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
 
-    .header-actions { display: flex; gap: 12px; align-items: center; } /* Gap maior para evitar toques errados */
+    .header-actions { display: flex; gap: 12px; align-items: center; } 
     .icon-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-color); padding: 4px; }
 
     .theme-options { display: flex; justify-content: space-between; }
@@ -189,7 +192,6 @@
     #toast-notification.show { opacity: 1; }
   </style>
 
-  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
 </head>
 <body>
 
@@ -229,7 +231,7 @@
   </div>
   <audio id="ambientPlayer" loop style="display:none;"></audio>
 
-  <!-- MODAL MASTER: MENU CENTRAL (Agrupa Voz, Tema, Privacidade e Ajuda) -->
+  <!-- MODAL MASTER: MENU CENTRAL -->
   <div id="settings-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -257,7 +259,7 @@
 
         <!-- Bloco 2: Voz Humana -->
         <div class="accordion-item">
-          <button class="accordion-header" onclick="toggleAccordion(this)" onclick="populateVoices()">
+          <button class="accordion-header" onclick="toggleAccordion(this); populateVoices();">
             <span>🗣️ Personalização de Voz</span> <span class="accordion-icon">▼</span>
           </button>
           <div class="accordion-content">
@@ -307,7 +309,7 @@
           </div>
         </div>
 
-        <!-- Bloco 4: Manual do App (Aba ❓ Atualizada) -->
+        <!-- Bloco 4: Manual do App -->
         <div class="accordion-item">
           <button class="accordion-header" onclick="toggleAccordion(this)">
             <span>📖 Como usar o aplicativo?</span> <span class="accordion-icon">▼</span>
@@ -474,11 +476,10 @@
     function openModal(modalId) {
       document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
       document.getElementById(modalId).classList.add('active');
-      if(modalId === 'settings-modal') populateVoices();
     }
     function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
 
-    /* RESET DE MEMÓRIA (Agora dentro do Modal ⚙️) */
+    /* RESET DE MEMÓRIA E HISTÓRICO */
     window.clearChatMemory = function() {
       if(confirm("Tem certeza que deseja apagar toda a sua conversa? Isso limpará a memória da Inteligência Artificial e garantirá sua privacidade. (Esta ação não pode ser desfeita)")) {
         state.session_history = []; saveState(); renderHistory(); currentEmotionalState = "ESTÁVEL";
@@ -528,6 +529,7 @@
 
     function registrarTelemetria() { let stats = JSON.parse(localStorage.getItem('abraco_telemetry')) || { sessoes: 0 }; stats.sessoes += 1; localStorage.setItem('abraco_telemetry', JSON.stringify(stats)); }
 
+    /* INICIALIZAÇÃO V4.4 (Ultra Fast Boot e Escudo Anti-Corrupção) */
     const canvas = document.getElementById('logoCanvas'); const ctx = canvas.getContext('2d');
     const heroWrapper = document.getElementById('hero-wrapper'); const logoAnchor = document.getElementById('logo-anchor');
     const brandTitle = document.getElementById('brand-title'); const chatContainer = document.getElementById('chat-container');
@@ -535,23 +537,38 @@
     let keystrokeData = { timestamps: [], backspaceCount: 0, lastKeyDownTime: 0 };
     let currentEmotionalState = "ESTÁVEL"; let synthAudioCtx = null; let synthNodes = [];
 
-    window.onload = () => {
-      registrarTelemetria(); loadState(); initCanvas(); initVoices(); initVLibras(); initMicroExpressionEngine(); initNetworkMonitor();
+    document.addEventListener('DOMContentLoaded', () => {
+      registrarTelemetria(); 
+      
+      // Escudo Anti-Corrupção de Memória
+      try { loadState(); } catch(e) { 
+        console.error("Corrupção detectada, limpando memória...");
+        localStorage.removeItem('aquele_abraco_state'); 
+        state.session_history = []; 
+        renderHistory(); 
+      }
+
+      initCanvas(); initVoices(); initVLibras(); initMicroExpressionEngine(); initNetworkMonitor();
+      
       if (localStorage.getItem('ia_offline_instalada') === 'true') {
          const btn = document.getElementById('download-ai-btn');
          if(btn) { btn.innerText = "🧠 IA Offline Instalada"; btn.style.background = "#2ed573"; btn.style.color = "white"; btn.disabled = true; }
       }
+
+      // V4.4 FIX: Inicia a animação imediatamente, sem esperar nada da internet
+      requestAnimationFrame(animateLogo);
+
       setTimeout(() => {
         logoAnchor.appendChild(heroWrapper); heroWrapper.classList.add('minimized');
         brandTitle.classList.add('visible'); chatContainer.classList.add('visible');
+        
         if (localStorage.getItem('ia_offline_instalada') === 'true') {
             import('https://esm.run/@mlc-ai/web-llm').then(async (webllm) => {
               try { window.offlineAIEngine.engine = await webllm.CreateMLCEngine("TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC"); window.offlineAIEngine.isLoaded = true; updateNetworkStatus(); } catch(e) {}
             }).catch(err => {});
         }
       }, cycleDuration);
-      requestAnimationFrame(animateLogo);
-    };
+    });
 
     function initNetworkMonitor() { window.addEventListener('online', updateNetworkStatus); window.addEventListener('offline', updateNetworkStatus); updateNetworkStatus(); }
     function updateNetworkStatus() {
@@ -744,6 +761,10 @@
 
     function appendMessage(text, sender, save = true, suggestedCBT = null) {
       const container = document.getElementById('chat-container'); const msgDiv = document.createElement('div'); msgDiv.className = `message ${sender}`;
+      
+      // Filtro anti-corrupção no carregamento
+      if (!text || typeof text !== 'string') text = "...";
+
       if (sender === 'assistant') {
         const paragraphs = text.split(/\n+/).map(p => p.trim()).filter(p => p.length > 0);
         if (paragraphs.length === 0) paragraphs.push(text);
@@ -779,7 +800,25 @@
     }
 
     function saveState() { localStorage.setItem('aquele_abraco_state', JSON.stringify(state)); }
-    function loadState() { const saved = localStorage.getItem('aquele_abraco_state'); if (saved) { try { const parsed = JSON.parse(saved); state = { ...state, ...parsed }; renderHistory(); } catch (e) {} } else renderHistory(); }
+    function loadState() { 
+      const saved = localStorage.getItem('aquele_abraco_state'); 
+      if (saved) { 
+        try { 
+          const parsed = JSON.parse(saved); 
+          if(parsed && Array.isArray(parsed.session_history)) {
+            state = { ...state, ...parsed }; 
+            renderHistory(); 
+          } else {
+            throw new Error("Estado corrompido");
+          }
+        } catch (e) { 
+          throw e; // Repassa para o try/catch principal no DOMContentLoaded
+        } 
+      } else {
+        renderHistory(); 
+      }
+    }
+    
     function renderHistory() { const container = document.getElementById('chat-container'); container.innerHTML = ''; appendMessage("Estou aqui com você. Como está seu coração hoje?", 'assistant', false); state.session_history.forEach(msg => appendMessage(msg.text, msg.sender, false)); }
 
     function toggleEmojiPicker() { const picker = document.getElementById('emoji-picker-modal'); picker.style.display = picker.style.display === 'flex' ? 'none' : 'flex'; }
@@ -807,7 +846,7 @@
               const newWorker = reg.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  if (confirm("Uma nova atualização do Aquele Abraço (V4.3) está disponível! Deseja aplicar as correções agora?")) {
+                  if (confirm("Uma nova atualização do Aquele Abraço (V4.4) está disponível! Deseja aplicar as correções agora?")) {
                     newWorker.postMessage({ action: 'skipWaiting' });
                     window.location.reload();
                   }
