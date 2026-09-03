@@ -1,46 +1,39 @@
-const CACHE_NAME = 'aquele-abraco-v1';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png'
+const CACHE_NAME = 'aquele-abraco-v2.2.0';
+const STATIC_ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './cbtData.js',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
-// Instala o Service Worker e salva os arquivos essenciais
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
   self.skipWaiting();
 });
 
-// Limpa caches antigos caso a gente atualize o app no futuro
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((name) => {
-          if (name !== CACHE_NAME) {
-            return caches.delete(name);
-          }
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) return caches.delete(key);
         })
-      );
-    })
+      )
+    )
   );
   self.clients.claim();
 });
 
-// Intercepta os pedidos: tenta a internet primeiro, se falhar, puxa do Cache (Offline)
 self.addEventListener('fetch', (event) => {
-  // Ignora requisições de API (para não bugar o chat) e foca só na interface
-  if (event.request.url.includes('/api/')) return;
-
+  if (event.request.method !== 'GET') return;
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) return cachedResponse;
+      return fetch(event.request).catch(() => caches.match('./index.html'));
     })
   );
 });
