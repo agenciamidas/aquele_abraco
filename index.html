@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aquele Abraço 3.5 (Smart Offline Edition)</title>
+  <title>Aquele Abraço 3.6 (Hardware Diagnostics)</title>
 
   <!-- PWA META TAGS -->
   <link rel="manifest" href="manifest.json">
@@ -178,12 +178,12 @@
     }
     .glosa-box.visible { display: block; }
 
-    /* BOTÕES INLINE DO CBT OFFLINE E SUGESTÕES DA IA */
+    /* BOTÕES INLINE DO CBT OFFLINE */
     .cbt-inline-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; width: 100%; border-top: 1px dotted var(--border-color); padding-top: 8px; }
     .cbt-inline-btn { padding: 10px; border: 1px solid var(--primary-color); border-radius: 8px; background: var(--bg-color); color: var(--text-color); font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s; display: flex; align-items: center; gap: 8px;}
     .cbt-inline-btn:active { background: rgba(0,0,0,0.05); transform: scale(0.98); }
 
-    /* CONTROLES E INPUT (SEMPRE VISÍVEIS) */
+    /* CONTROLES E INPUT */
     .input-area {
       background-color: var(--card-bg); padding: 10px 15px 15px;
       border-top: 1px solid var(--border-color); flex-shrink: 0;
@@ -482,7 +482,7 @@
     </div>
   </div>
 
-  <!-- MODAL COMO FUNCIONA E BASTIDORES -->
+  <!-- MODAL COMO FUNCIONA -->
   <div id="tutorial-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -549,56 +549,12 @@
 
         <div class="accordion-item">
           <button class="accordion-header" onclick="toggleAccordion(this)">
-            <span style="flex:1;">🏛️ Bastidores do Abraço (Fundador)</span>
+            <span style="flex:1;">🏛️ Bastidores do Abraço</span>
             <div class="access-btns"><span class="access-btn" onclick="toggleAccordionAudio(event, this)">🔊</span><span class="access-btn" onclick="toggleAccordionLibras(event, this)">🤟</span></div>
             <span class="accordion-icon">▼</span>
           </button>
           <div class="accordion-content">
             Projetado por <strong>Edwin Balera</strong>, líder em arquitetura de engenharia de software e inovação técnica. A plataforma unifica rigidez técnica de alta performance com sensibilidade humana para oferecer um porto seguro imediato, com Fricção Zero e segurança absoluta de dados.
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            <span style="flex:1;">🗣️ Vozes & Avanço Automático</span>
-            <div class="access-btns"><span class="access-btn" onclick="toggleAccordionAudio(event, this)">🔊</span><span class="access-btn" onclick="toggleAccordionLibras(event, this)">🤟</span></div>
-            <span class="accordion-icon">▼</span>
-          </button>
-          <div class="accordion-content">
-            A leitura de voz é dividida por parágrafo com avanço automático. Personalize com vozes neurais e estilos emocionais (Acolhedora, Serena, Enérgica) pelo ícone de voz no cabeçalho.
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            <span style="flex:1;">🤟 Inclusão Sinais e Arquivos</span>
-            <div class="access-btns"><span class="access-btn" onclick="toggleAccordionAudio(event, this)">🔊</span><span class="access-btn" onclick="toggleAccordionLibras(event, this)">🤟</span></div>
-            <span class="accordion-icon">▼</span>
-          </button>
-          <div class="accordion-content">
-            Comunicação natural em qualquer Língua de Sinais gravada por vídeo, com seletor de tempo de gravação. A IA interpreta o idioma gestual e responde em Português.
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            <span style="flex:1;">🎨 Arteterapia e Emojis</span>
-            <div class="access-btns"><span class="access-btn" onclick="toggleAccordionAudio(event, this)">🔊</span><span class="access-btn" onclick="toggleAccordionLibras(event, this)">🤟</span></div>
-            <span class="accordion-icon">▼</span>
-          </button>
-          <div class="accordion-content">
-            Espaço de desenho livre (caneta, spray e borracha) e um vasto catálogo de emojis categorizados de satisfação, paixão, caos interno e busca de paz.
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="toggleAccordion(this)">
-            <span style="flex:1;">🛡️ Modo Escudo & Biometria</span>
-            <div class="access-btns"><span class="access-btn" onclick="toggleAccordionAudio(event, this)">🔊</span><span class="access-btn" onclick="toggleAccordionLibras(event, this)">🤟</span></div>
-            <span class="accordion-icon">▼</span>
-          </button>
-          <div class="accordion-content">
-            Soberania de dados local. O botão de escudo tranca o app, realiza backup silencioso e projeta uma tela de erro do sistema. O motor analisa microexpressões do teclado e do vídeo.
           </div>
         </div>
       </div>
@@ -734,10 +690,10 @@
         window.offlineAIEngine.isLoaded = true;
         
         btn.innerText = "🧠 IA Offline Instalada"; btn.style.background = "#2ed573"; btn.style.color = "white";
-        alert("Inteligência Artificial instalada no dispositivo! O chat inteligente funcionará sem internet.");
+        alert("Inteligência Artificial instalada no dispositivo! O chat funcionará sem internet.");
         updateNetworkStatus();
       } catch (error) {
-        btn.innerText = "Erro ao baixar (Tente via Wi-Fi)"; btn.style.background = "#e17055"; btn.style.color = "white"; btn.disabled = false;
+        btn.innerText = "Erro ao baixar (Tente no Wi-Fi)"; btn.style.background = "#e17055"; btn.style.color = "white"; btn.disabled = false;
       }
     };
 
@@ -766,6 +722,15 @@
       setTimeout(() => {
         logoAnchor.appendChild(heroWrapper); heroWrapper.classList.add('minimized');
         brandTitle.classList.add('visible'); chatContainer.classList.add('visible');
+        
+        // Remove restriction to load WebLLM silently without internet connection if cached by SW
+        import('https://esm.run/@mlc-ai/web-llm').then(async (webllm) => {
+          try {
+            window.offlineAIEngine.engine = await webllm.CreateMLCEngine("TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC");
+            window.offlineAIEngine.isLoaded = true;
+            updateNetworkStatus();
+          } catch(e) {}
+        }).catch(err => {});
       }, cycleDuration);
       requestAnimationFrame(animateLogo);
     };
@@ -794,6 +759,7 @@
       else if (actionCode === 'TECNICA_54321') {
         const txt = "Vamos aterrar sua mente. Olhe ao redor e encontre: 5 coisas que você pode ver. 4 coisas que pode tocar. 3 que pode ouvir. 2 que pode cheirar. E 1 emoção boa.";
         appendMessage(txt, 'assistant', false);
+        
         setTimeout(() => {
           const msgs = document.querySelectorAll('.message.assistant .paragraph-item');
           if (msgs.length > 0) {
@@ -883,6 +849,7 @@
     function play852Hz() { initSynthAudio(); stopSyntheticAudio(); const osc = synthAudioCtx.createOscillator(); const gain = synthAudioCtx.createGain(); osc.type = 'sine'; osc.frequency.value = 852; gain.gain.setValueAtTime(0, synthAudioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.15, synthAudioCtx.currentTime + 2); osc.connect(gain); gain.connect(synthAudioCtx.destination); osc.start(); synthNodes.push(osc); }
     function playAcoustic(track) { const player = document.getElementById('ambientPlayer'); player.pause(); stopSyntheticAudio(); if (track === 'chuva') playRain(); else if (track === 'binaural') playBinaural(); else if (track === 'reset') play852Hz(); else if (track === 'mindfulness') { player.src = 'https://ice1.somafm.com/dronezone-128-mp3'; player.volume = 0.2; player.play().catch(e => console.log("Áudio bloqueado.")); } }
     function stopAcoustic() { const player = document.getElementById('ambientPlayer'); player.pause(); stopSyntheticAudio(); }
+
     function resetAudioState() { document.querySelectorAll('.paragraph-item').forEach(p => p.classList.remove('speaking')); document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('speaking')); document.querySelectorAll('.access-btn').forEach(b => { if(b.innerText === '⏹️') b.innerText = '🔊'; }); currentSpeakingPElem = null; currentSpeakingAccordionBtn = null; }
     function readGenericText(text, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada."); if (window.speechSynthesis.speaking && btnElem.innerText === '⏹️') { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0); utterance.rate = parseFloat(state.voiceSettings.rate || 0.95); utterance.volume = parseFloat(state.voiceSettings.volume || 1.0); } else utterance.rate = 0.95; utterance.onend = () => resetAudioState(); utterance.onerror = () => resetAudioState(); btnElem.innerText = '⏹️'; window.speechSynthesis.speak(utterance); }
     function toggleAccordionAudio(event, btnElem) { event.stopPropagation(); const accordionItem = btnElem.closest('.accordion-item'); const textToRead = accordionItem.querySelector('.accordion-content').innerText; if (!accordionItem.classList.contains('open')) { document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open')); accordionItem.classList.add('open'); } readGenericText(textToRead, btnElem); accordionItem.classList.add('speaking'); }
@@ -893,26 +860,20 @@
     }
     
     function toggleAudioForParagraph(pText, pElem, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada."); if (currentSpeakingPElem === pElem && window.speechSynthesis.speaking) { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(pText); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0); utterance.rate = parseFloat(state.voiceSettings.rate || 0.95); utterance.volume = parseFloat(state.voiceSettings.volume || 1.0); } else utterance.rate = 0.95; utterance.onend = () => { pElem.classList.remove('speaking'); if (btnElem) btnElem.innerText = '🔊'; currentSpeakingPElem = null; const autoAdvance = state.voiceSettings ? state.voiceSettings.autoAdvance : true; if (autoAdvance) { const parentMsg = pElem.closest('.message'); if (parentMsg) { const paragraphs = Array.from(parentMsg.querySelectorAll('.paragraph-item')); const currentIndex = paragraphs.indexOf(pElem); if (currentIndex !== -1 && currentIndex < paragraphs.length - 1) { const nextPElem = paragraphs[currentIndex + 1]; const nextBtnElems = nextPElem.querySelectorAll('.access-btn'); let nextBtnElem = null; nextBtnElems.forEach(b => { if(b.innerText === '🔊') nextBtnElem = b; }); const nextText = nextPElem.querySelector('.paragraph-text').innerText; setTimeout(() => { toggleAudioForParagraph(nextText, nextPElem, nextBtnElem); }, 250); } } } }; utterance.onerror = () => resetAudioState(); pElem.classList.add('speaking'); if (btnElem) btnElem.innerText = '⏹️'; currentSpeakingPElem = pElem; window.speechSynthesis.speak(utterance); }
-    function handleFileUpload(event) { const file = event.target.files[0]; if (!file) return; appendMessage(`[Anexo Enviado: ${file.name}]`, 'user'); const reader = new FileReader(); reader.onloadend = () => { const fileBase64 = reader.result; processUserMessage(`Acabei de anexar um arquivo chamado "${file.name}". Por favor, verifique o conteúdo dele e responda apropriadamente.`, fileBase64, file.type); }; reader.readAsDataURL(file); }
+    function handleFileUpload(event) { const file = event.target.files[0]; if (!file) return; appendMessage(`[Anexo Enviado: ${file.name}]`, 'user'); const reader = new FileReader(); reader.onloadend = () => { const fileBase64 = reader.result; processUserMessage(`Acabei de anexar arquivo "${file.name}".`, fileBase64, file.type); }; reader.readAsDataURL(file); }
 
-    /* --- V3.5 ROTEADOR MULTIMODAL (FILTRO DE PALAVRAS EXATO FIX) --- */
+    /* --- V3.6: ROTEADOR IA COM DIAGNÓSTICO DE HARDWARE --- */
     async function processUserMessageWithCascade(userText, mediaPayload, mimeType) {
-      
       const txt = userText.toUpperCase();
       let suggestedCBT = null;
       
-      // FIX DA LÓGICA DO "AR": Agora usa Regex \b para pegar apenas a palavra inteira
       const hasPhysical = /\b(CORAÇÃO|RESPIRAR|FALTA DE AR|DOR|PÂNICO|SUOR|TREMOR)\b/.test(txt);
       const hasSensory = /\b(BARULHO|CABEÇA|PENSAMENTO|MUITO|SOBRECARGA|CONFUSÃO|GRITO)\b/.test(txt);
       const hasArt = /\b(DESENHAR|ARTE|DISTRAIR|PINTAR|DESENHO)\b/.test(txt);
 
-      if (hasPhysical || currentEmotionalState === "ALERTA_PÂNICO") {
-          suggestedCBT = 'crise_fisica';
-      } else if (hasSensory) {
-          suggestedCBT = 'sobrecarga_sensorial';
-      } else if (hasArt) {
-          suggestedCBT = 'redirecionar_arteterapia';
-      }
+      if (hasPhysical || currentEmotionalState === "ALERTA_PÂNICO") suggestedCBT = 'crise_fisica';
+      else if (hasSensory) suggestedCBT = 'sobrecarga_sensorial';
+      else if (hasArt) suggestedCBT = 'redirecionar_arteterapia';
 
       // NÍVEL 1: NUVEM
       if (navigator.onLine) {
@@ -934,7 +895,7 @@
         } catch (error) { console.warn("Nível 1 (Nuvem) falhou ou demorou demais."); }
       }
 
-      // NÍVEL 2: IA NATIVA DO BROWSER (window.ai)
+      // NÍVEL 2: IA NATIVA DO BROWSER
       if (window.ai && window.ai.languageModel) {
         try {
           const capabilities = await window.ai.languageModel.capabilities();
@@ -954,14 +915,18 @@
             messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userText }]
           });
           return { text: result.choices[0].message.content, source: 'WEBLLM_CACHE', suggestedCBT };
-        } catch (error) { console.warn("Nível 3 (Cache WebLLM) falhou."); }
+        } catch (error) { 
+          console.warn("Nível 3 (Cache WebLLM) falhou na inferência (OOM/WebGPU Error).", error); 
+          // FIX: DIAGNÓSTICO CLARO PARA O USUÁRIO DE HARDWARE FAIL
+          let fallbackText = `Tentei usar a Inteligência Artificial que baixamos, mas o processador deste aparelho atingiu o limite de memória (WebGPU limit) e abortou a operação para não travar o celular. Estou assumindo no modo de segurança.\n\n[GLOSA]: CELULAR NÃO AGUENTAR IA PESADA. EU USAR MODO SEGURO. EU AQUI.`;
+          return { text: fallbackText, source: 'TCC_CHATBOT', suggestedCBT: suggestedCBT || 'crise_fisica' };
+        }
       }
 
-      // NÍVEL 4: CHATBOT TCC DE EMERGÊNCIA (INTELIGÊNCIA DE CONTEXTO)
+      // NÍVEL 4: CHATBOT TCC DE EMERGÊNCIA
       if (navigator.onLine) {
-         let fallbackText = `Estou conectando aos meus servidores e pode levar um instante, mas eu não vou deixar você sozinho. Enquanto processo, pode continuar me contando como se sente?\n\n[GLOSA]: EU OUVIR. INTERNET LENTA. EU AQUI.`;
+         let fallbackText = `Estou conectando aos meus servidores e pode levar um instante, mas não vou deixar você sozinho. Pode continuar me contando como se sente?\n\n[GLOSA]: EU OUVIR. INTERNET LENTA. EU AQUI.`;
          if (suggestedCBT === 'crise_fisica') fallbackText = `Percebi que seu corpo está reagindo. Minha conexão principal está lenta, mas eu estou com você. Quer tentar uma técnica rápida para se acalmar?\n\n[GLOSA]: EU VER CORPO NERVOSO. EU AQUI. NÓS ACALMAR.`;
-         
          return { text: fallbackText, source: 'NUVEM_TIMEOUT', suggestedCBT };
       } else {
          let fallbackText = "";
@@ -972,19 +937,15 @@
          } else if (suggestedCBT === 'redirecionar_arteterapia') {
              fallbackText = `Entendi perfeitamente. Às vezes, imagens falam mais que palavras. Quer tentar desenhar?\n\n[GLOSA]: PALAVRA DIFÍCIL AGORA. VOCÊ DESENHAR SENTIMENTO.`;
          } else {
-             // O BOT DEIXOU DE SER UM DISCO ARRANHADO
              const respostasGenericas = [
-                 "Estou operando no modo de segurança sem internet. Eu te ouço, mas minhas respostas estão um pouco limitadas agora. Quer tentar alguma ferramenta do aplicativo?",
+                 "Estou operando no modo de segurança sem internet. Eu te ouço, mas minhas respostas não podem ser longas agora. Quer tentar alguma ferramenta do aplicativo?",
                  "Entendi o que você disse. Sem internet, meu cérebro principal está dormindo, mas eu continuo aqui para te dar suporte. Como posso ajudar?",
-                 "Estou aqui com você. Minha conexão caiu, então não consigo gerar histórias longas ou textos complexos agora, mas nossas ferramentas terapêuticas continuam funcionando.",
+                 "Estou aqui com você. Minha conexão caiu, então não consigo conversar sobre muitos assuntos, mas nossas ferramentas terapêuticas continuam funcionando.",
                  "Sua mensagem chegou até mim. No modo offline, sou um ouvinte mais silencioso. Quer tentar fazer um desenho ou ouvir um som relaxante para passar o tempo?"
              ];
              fallbackText = respostasGenericas[Math.floor(Math.random() * respostasGenericas.length)];
-             
-             // Se não detectou crise, não força os botões do TCC!
              suggestedCBT = null;
          }
-         
          return { text: fallbackText, source: 'TCC_CHATBOT', suggestedCBT }; 
       }
     }
@@ -1100,7 +1061,7 @@
               const newWorker = reg.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  if (confirm("Uma nova atualização do Aquele Abraço (V3.5) está disponível! Deseja aplicar as correções agora?")) {
+                  if (confirm("Uma nova atualização do Aquele Abraço (V3.6) está disponível! Deseja aplicar as correções agora?")) {
                     newWorker.postMessage({ action: 'skipWaiting' });
                     window.location.reload();
                   }
