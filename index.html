@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aquele Abraço 3.7 (Empathetic AI Edition)</title>
+  <title>Aquele Abraço 3.8 (Clean & Empathetic Edition)</title>
 
   <!-- PWA META TAGS -->
   <link rel="manifest" href="manifest.json">
@@ -178,7 +178,7 @@
     }
     .glosa-box.visible { display: block; }
 
-    /* BOTÕES INLINE DO CBT OFFLINE */
+    /* BOTÕES INLINE DO CBT OFFLINE E SUGESTÕES DA IA */
     .cbt-inline-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; width: 100%; border-top: 1px dotted var(--border-color); padding-top: 8px; }
     .cbt-inline-btn { padding: 10px; border: 1px solid var(--primary-color); border-radius: 8px; background: var(--bg-color); color: var(--text-color); font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s; display: flex; align-items: center; gap: 8px;}
     .cbt-inline-btn:active { background: rgba(0,0,0,0.05); transform: scale(0.98); }
@@ -447,9 +447,7 @@
       <button class="action-btn" id="camBtn" style="background:#e84393; color:white;" onclick="openCameraModal()" title="Câmera / Vídeo Sinais">📷</button>
       <label for="fileInput" class="action-btn" style="background:#74b9ff; color:white;" title="Anexar Arquivo">📎</label>
       <input type="file" id="fileInput" accept="image/*,audio/*,.pdf" onchange="handleFileUpload(event)">
-      
       <textarea id="userInput" placeholder="Sua voz ou seu texto..."></textarea>
-      
       <button class="action-btn voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Voz">🎙️</button>
       <button class="action-btn" onclick="sendMessage()" title="Enviar">➔</button>
     </div>
@@ -465,7 +463,6 @@
       <div class="modal-body" style="width:100%; align-items:center;">
         <video id="webcam-preview" autoplay playsinline style="width:100%; max-height:250px; border-radius:12px; background:#000;"></video>
         <p style="font-size:0.8rem; color:#666; margin-top:8px;">Expresse-se em qualquer língua de sinais. Escolha o tempo de gravação:</p>
-        
         <div style="display:flex; gap:8px; justify-content:center; margin-top:8px; width:100%;">
           <select id="videoDuration" class="panel-select" style="width:auto; min-width:100px;">
             <option value="3500">3.5 Segundos</option>
@@ -474,7 +471,6 @@
             <option value="15000">15 Segundos</option>
           </select>
         </div>
-
         <button id="captureLibrasBtn" onclick="captureSignLanguage()" style="margin-top:12px; padding:10px 20px; background:var(--primary-color); color:var(--bg-color); border:none; border-radius:8px; cursor:pointer; font-weight:600;">
           Gravar Comunicação
         </button>
@@ -482,7 +478,7 @@
     </div>
   </div>
 
-  <!-- MODAL COMO FUNCIONA -->
+  <!-- MODAL COMO FUNCIONA E BASTIDORES -->
   <div id="tutorial-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -491,7 +487,6 @@
       </div>
 
       <div class="modal-body">
-        
         <div class="accordion-item">
           <button class="accordion-header" onclick="toggleAccordion(this)">
             <span style="flex:1;">⚙️ Como Baixar a IA Offline</span>
@@ -577,7 +572,7 @@
     </div>
   </div>
 
-  <!-- BACKUP MODAL -->
+  <!-- BACKUP E DOWNLOAD MODAL -->
   <div id="backup-modal">
     <div class="backup-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -653,7 +648,7 @@
       }
     }
 
-    /* --- V3.4 TRADUTOR LOCAL GLOSA ESTRUTURAL --- */
+    /* TRADUTOR LOCAL GLOSA ESTRUTURAL */
     window.toggleGlosaText = function(text, parentElem) {
       let glosaBox = parentElem.querySelector('.glosa-box');
       if (!glosaBox) {
@@ -674,38 +669,38 @@
       }
     }
 
-    /* --- V3.7: DOWNLOAD REAL COM AVISO DE SEGURANÇA E HARDWARE (ACOLHEDOR) --- */
+    /* DOWNLOAD REAL COM AVISO DE SEGURANÇA E HARDWARE */
     window.downloadRealAI = async function() {
       if (!navigator.gpu) {
-        alert("Sabe, acabei de checar e o sistema do seu aparelho ainda não suporta o formato dessa Inteligência Artificial mais pesada.\n\nMas não precisa se preocupar, de verdade! O meu 'Escudo de Proteção' já está ativado e vai continuar cuidando de você sempre que faltar internet.");
+        alert("Sabe, acabei de checar e o seu aparelho não suporta essa Inteligência Artificial mais pesada. Mas não precisa se preocupar, de verdade! O meu 'Escudo de Proteção' já está ativado e vai continuar cuidando de você sempre que faltar internet.");
         return;
       }
 
-      const msg = "Para eu poder conversar profundamente com você mesmo quando a internet cair, preciso criar um cantinho seguro aqui no seu celular.\n\nComo esse meu 'cérebro' pesa cerca de 600MB, peço que você use uma rede Wi-Fi para não gastar os seus dados móveis, tá bom?\n\nPodemos iniciar o download agora?";
+      const msg = "Para eu poder conversar profundamente com você mesmo quando a internet cair, preciso criar um cantinho seguro no seu celular. Como esse meu 'cérebro' pesa cerca de 600MB, peço que você use uma rede Wi-Fi para não gastar os seus dados móveis, tá bom? Podemos iniciar o download?";
       
       if (!confirm(msg)) {
         return; 
       }
 
       const btn = document.getElementById('download-ai-btn');
-      btn.innerText = "Preparando o meu cérebro..."; btn.style.background = "#fdcb6e"; btn.style.color = "#333"; btn.disabled = true;
+      btn.innerText = "Preparando motor..."; btn.style.background = "#fdcb6e"; btn.style.color = "#333"; btn.disabled = true;
 
       try {
         const { CreateMLCEngine } = await import('https://esm.run/@mlc-ai/web-llm');
         const initProgressCallback = (initProgress) => {
           const prog = Math.round(initProgress.progress * 100);
-          btn.innerText = `Baixando: ${prog}% (Fica comigo, já acaba)`;
+          btn.innerText = `Baixando IA: ${prog}% (Aguarde)`;
         };
         const selectedModel = "TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC";
         window.offlineAIEngine.engine = await CreateMLCEngine(selectedModel, { initProgressCallback: initProgressCallback });
         window.offlineAIEngine.isLoaded = true;
         
         btn.innerText = "🧠 IA Offline Instalada"; btn.style.background = "#2ed573"; btn.style.color = "white";
-        alert("Tudo pronto! Meu assistente offline foi instalado com sucesso e já posso conversar com você sem internet.");
+        alert("Tudo pronto! Seu assistente offline foi instalado com sucesso.");
         updateNetworkStatus();
       } catch (error) {
         console.error(error);
-        btn.innerText = "Erro ao baixar (Tente com Wi-Fi)"; btn.style.background = "#e17055"; btn.style.color = "white"; btn.disabled = false;
+        btn.innerText = "Erro ao baixar (Tente no Wi-Fi)"; btn.style.background = "#e17055"; btn.style.color = "white"; btn.disabled = false;
       }
     };
 
@@ -735,7 +730,6 @@
         logoAnchor.appendChild(heroWrapper); heroWrapper.classList.add('minimized');
         brandTitle.classList.add('visible'); chatContainer.classList.add('visible');
         
-        // Remove restriction to load WebLLM silently without internet connection if cached by SW
         import('https://esm.run/@mlc-ai/web-llm').then(async (webllm) => {
           try {
             window.offlineAIEngine.engine = await webllm.CreateMLCEngine("TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC");
@@ -754,7 +748,6 @@
     function updateNetworkStatus() {
       const badge = document.getElementById('network-badge');
       const temIALocal = window.offlineAIEngine && window.offlineAIEngine.isLoaded;
-      
       if (navigator.onLine) {
         badge.textContent = 'Online'; badge.className = 'network-badge badge-online';
       } else if (temIALocal) {
@@ -771,7 +764,6 @@
       else if (actionCode === 'TECNICA_54321') {
         const txt = "Vamos aterrar sua mente. Olhe ao redor e encontre: 5 coisas que você pode ver. 4 coisas que pode tocar. 3 que pode ouvir. 2 que pode cheirar. E 1 emoção boa.";
         appendMessage(txt, 'assistant', false);
-        
         setTimeout(() => {
           const msgs = document.querySelectorAll('.message.assistant .paragraph-item');
           if (msgs.length > 0) {
@@ -874,9 +866,8 @@
     function toggleAudioForParagraph(pText, pElem, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada."); if (currentSpeakingPElem === pElem && window.speechSynthesis.speaking) { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(pText); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0); utterance.rate = parseFloat(state.voiceSettings.rate || 0.95); utterance.volume = parseFloat(state.voiceSettings.volume || 1.0); } else utterance.rate = 0.95; utterance.onend = () => { pElem.classList.remove('speaking'); if (btnElem) btnElem.innerText = '🔊'; currentSpeakingPElem = null; const autoAdvance = state.voiceSettings ? state.voiceSettings.autoAdvance : true; if (autoAdvance) { const parentMsg = pElem.closest('.message'); if (parentMsg) { const paragraphs = Array.from(parentMsg.querySelectorAll('.paragraph-item')); const currentIndex = paragraphs.indexOf(pElem); if (currentIndex !== -1 && currentIndex < paragraphs.length - 1) { const nextPElem = paragraphs[currentIndex + 1]; const nextBtnElems = nextPElem.querySelectorAll('.access-btn'); let nextBtnElem = null; nextBtnElems.forEach(b => { if(b.innerText === '🔊') nextBtnElem = b; }); const nextText = nextPElem.querySelector('.paragraph-text').innerText; setTimeout(() => { toggleAudioForParagraph(nextText, nextPElem, nextBtnElem); }, 250); } } } }; utterance.onerror = () => resetAudioState(); pElem.classList.add('speaking'); if (btnElem) btnElem.innerText = '⏹️'; currentSpeakingPElem = pElem; window.speechSynthesis.speak(utterance); }
     function handleFileUpload(event) { const file = event.target.files[0]; if (!file) return; appendMessage(`[Anexo Enviado: ${file.name}]`, 'user'); const reader = new FileReader(); reader.onloadend = () => { const fileBase64 = reader.result; processUserMessage(`Acabei de anexar um arquivo chamado "${file.name}". Por favor, verifique o conteúdo dele e responda apropriadamente.`, fileBase64, file.type); }; reader.readAsDataURL(file); }
 
-    /* --- V3.5 ROTEADOR MULTIMODAL (FILTRO DE PALAVRAS EXATO FIX) --- */
+    /* ROTEADOR MULTIMODAL (FILTRO DE PALAVRAS EXATO FIX) */
     async function processUserMessageWithCascade(userText, mediaPayload, mimeType) {
-      
       const txt = userText.toUpperCase();
       let suggestedCBT = null;
       
@@ -884,47 +875,36 @@
       const hasSensory = /\b(BARULHO|CABEÇA|PENSAMENTO|MUITO|SOBRECARGA|CONFUSÃO|GRITO)\b/.test(txt);
       const hasArt = /\b(DESENHAR|ARTE|DISTRAIR|PINTAR|DESENHO)\b/.test(txt);
 
-      if (hasPhysical || currentEmotionalState === "ALERTA_PÂNICO") {
-          suggestedCBT = 'crise_fisica';
-      } else if (hasSensory) {
-          suggestedCBT = 'sobrecarga_sensorial';
-      } else if (hasArt) {
-          suggestedCBT = 'redirecionar_arteterapia';
-      }
+      if (hasPhysical || currentEmotionalState === "ALERTA_PÂNICO") suggestedCBT = 'crise_fisica';
+      else if (hasSensory) suggestedCBT = 'sobrecarga_sensorial';
+      else if (hasArt) suggestedCBT = 'redirecionar_arteterapia';
 
-      // NÍVEL 1: NUVEM
       if (navigator.onLine) {
         try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 12000); 
+          const controller = new AbortController(); const timeoutId = setTimeout(() => controller.abort(), 12000); 
           const payload = { message: userText, history: state.session_history };
           if (mediaPayload) { payload.media = mediaPayload; payload.mimeType = mimeType || "video/webm"; }
 
           const response = await fetch(API_BACKEND_URL, {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload), signal: controller.signal
+            method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), signal: controller.signal
           });
           clearTimeout(timeoutId);
           if (response.ok) {
-            const data = await response.json();
-            return { text: data.response || "Estou aqui com você.", source: 'NUVEM', suggestedCBT };
+            const data = await response.json(); return { text: data.response || "Estou aqui com você.", source: 'NUVEM', suggestedCBT };
           }
         } catch (error) { console.warn("Nível 1 (Nuvem) falhou ou demorou demais."); }
       }
 
-      // NÍVEL 2: IA NATIVA DO BROWSER (window.ai)
       if (window.ai && window.ai.languageModel) {
         try {
           const capabilities = await window.ai.languageModel.capabilities();
           if (capabilities.available !== 'no') {
             const session = await window.ai.languageModel.create({ systemPrompt: "Aja como um assistente de saúde mental empático e curto." });
-            const result = await session.prompt(userText);
-            return { text: result, source: 'NATIVA_HARDWARE', suggestedCBT };
+            const result = await session.prompt(userText); return { text: result, source: 'NATIVA_HARDWARE', suggestedCBT };
           }
         } catch (error) { console.warn("Nível 2 (Nativa) falhou."); }
       }
 
-      // NÍVEL 3: IA CACHE LOCAL (WebLLM)
       if (window.offlineAIEngine && window.offlineAIEngine.isLoaded && window.offlineAIEngine.engine) {
         try {
           const systemPrompt = `Você é o 'Aquele Abraço', um assistente empático de saúde mental. O usuário pode digitar em Português ou em GLOSA. Se for em GLOSA (ex: "EU TRISTE CORAÇÃO ACELERADO RESPIRAR RUIM"), compreenda o contexto imediatamente. Sua resposta deve ser acolhedora e simples.`;
@@ -932,24 +912,19 @@
             messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userText }]
           });
           return { text: result.choices[0].message.content, source: 'WEBLLM_CACHE', suggestedCBT };
-        } catch (error) { console.warn("Nível 3 (Cache WebLLM) falhou."); }
+        } catch (error) { console.warn("Nível 3 (Cache WebLLM) falhou na inferência."); }
       }
 
-      // NÍVEL 4: CHATBOT TCC DE EMERGÊNCIA (INTELIGÊNCIA DE CONTEXTO)
       if (navigator.onLine) {
          let fallbackText = `Estou conectando aos meus servidores e pode levar um instante, mas eu não vou deixar você sozinho. Enquanto processo, pode continuar me contando como se sente?\n\n[GLOSA]: EU OUVIR. INTERNET LENTA. EU AQUI.`;
          if (suggestedCBT === 'crise_fisica') fallbackText = `Percebi que seu corpo está reagindo. Minha conexão principal está lenta, mas eu estou com você. Quer tentar uma técnica rápida para se acalmar?\n\n[GLOSA]: EU VER CORPO NERVOSO. EU AQUI. NÓS ACALMAR.`;
-         
          return { text: fallbackText, source: 'NUVEM_TIMEOUT', suggestedCBT };
       } else {
          let fallbackText = "";
-         if (suggestedCBT === 'crise_fisica') {
-             fallbackText = `Percebi que seu corpo pode estar reagindo. Não se preocupe, estou operando offline, mas estou com você para te ajudar a se acalmar.\n\n[GLOSA]: EU AQUI. NÓS ACALMAR CORPO.`;
-         } else if (suggestedCBT === 'sobrecarga_sensorial') {
-             fallbackText = `Parece haver muita sobrecarga agora. Vamos diminuir esse ritmo juntos.\n\n[GLOSA]: MUNDO BARULHO. NÓS DESCANSAR MENTE.`;
-         } else if (suggestedCBT === 'redirecionar_arteterapia') {
-             fallbackText = `Entendi perfeitamente. Às vezes, imagens falam mais que palavras. Quer tentar desenhar?\n\n[GLOSA]: PALAVRA DIFÍCIL AGORA. VOCÊ DESENHAR SENTIMENTO.`;
-         } else {
+         if (suggestedCBT === 'crise_fisica') fallbackText = `Percebi que seu corpo pode estar reagindo. Não se preocupe, estou operando offline, mas estou com você para te ajudar a se acalmar.\n\n[GLOSA]: EU AQUI. NÓS ACALMAR CORPO.`;
+         else if (suggestedCBT === 'sobrecarga_sensorial') fallbackText = `Parece haver muita sobrecarga agora. Vamos diminuir esse ritmo juntos.\n\n[GLOSA]: MUNDO BARULHO. NÓS DESCANSAR MENTE.`;
+         else if (suggestedCBT === 'redirecionar_arteterapia') fallbackText = `Entendi perfeitamente. Às vezes, imagens falam mais que palavras. Quer tentar desenhar?\n\n[GLOSA]: PALAVRA DIFÍCIL AGORA. VOCÊ DESENHAR SENTIMENTO.`;
+         else {
              const respostasGenericas = [
                  "Estou operando no modo de segurança sem internet. Eu te ouço, mas minhas respostas estão um pouco limitadas agora. Quer tentar alguma ferramenta do aplicativo?",
                  "Entendi o que você disse. Sem internet, meu cérebro principal está dormindo, mas eu continuo aqui para te dar suporte. Como posso ajudar?",
@@ -959,14 +934,11 @@
              fallbackText = respostasGenericas[Math.floor(Math.random() * respostasGenericas.length)];
              suggestedCBT = null;
          }
-         
          return { text: fallbackText, source: 'TCC_CHATBOT', suggestedCBT }; 
       }
     }
 
-    async function sendMessage() {
-      const input = document.getElementById('userInput'); const text = input.value.trim(); if (!text) return; appendMessage(text, 'user'); input.value = ''; await processUserMessage(text);
-    }
+    async function sendMessage() { const input = document.getElementById('userInput'); const text = input.value.trim(); if (!text) return; appendMessage(text, 'user'); input.value = ''; await processUserMessage(text); }
 
     async function processUserMessage(userText, mediaPayload = null, mimeType = null) {
       const typingId = appendTypingIndicator();
@@ -1075,7 +1047,7 @@
               const newWorker = reg.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  if (confirm("Uma nova atualização do Aquele Abraço (V3.7) está disponível! Deseja aplicar as correções agora?")) {
+                  if (confirm("Uma nova atualização do Aquele Abraço (V3.8) está disponível! Deseja aplicar as correções agora?")) {
                     newWorker.postMessage({ action: 'skipWaiting' });
                     window.location.reload();
                   }
