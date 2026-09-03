@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aquele Abraço 3.8 (Clean & Empathetic Edition)</title>
+  <title>Aquele Abraço 3.9 (Empathetic AI Fix)</title>
 
   <!-- PWA META TAGS -->
   <link rel="manifest" href="manifest.json">
@@ -178,12 +178,12 @@
     }
     .glosa-box.visible { display: block; }
 
-    /* BOTÕES INLINE DO CBT OFFLINE E SUGESTÕES DA IA */
+    /* BOTÕES INLINE DO CBT OFFLINE */
     .cbt-inline-buttons { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; width: 100%; border-top: 1px dotted var(--border-color); padding-top: 8px; }
     .cbt-inline-btn { padding: 10px; border: 1px solid var(--primary-color); border-radius: 8px; background: var(--bg-color); color: var(--text-color); font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s; display: flex; align-items: center; gap: 8px;}
     .cbt-inline-btn:active { background: rgba(0,0,0,0.05); transform: scale(0.98); }
 
-    /* CONTROLES E INPUT (SEMPRE VISÍVEIS) */
+    /* CONTROLES E INPUT */
     .input-area {
       background-color: var(--card-bg); padding: 10px 15px 15px;
       border-top: 1px solid var(--border-color); flex-shrink: 0;
@@ -303,7 +303,6 @@
     #toast-notification.show { opacity: 1; }
   </style>
 
-  <!-- VLIBRAS INTEGRATION -->
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
 </head>
 <body>
@@ -478,7 +477,7 @@
     </div>
   </div>
 
-  <!-- MODAL COMO FUNCIONA E BASTIDORES -->
+  <!-- MODAL COMO FUNCIONA -->
   <div id="tutorial-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -584,6 +583,7 @@
       </div>
       <p id="backup-desc" style="font-size: 0.8rem; color: #888; margin-top:5px; margin-bottom:15px;">Soberania e Privacidade. Guarde seu registro criptografado no seu aparelho com total segurança.</p>
       
+      <!-- BOTÃO DE DOWNLOAD COM PROTEÇÃO -->
       <button id="download-ai-btn" onclick="downloadRealAI()" style="background:#0984e3; color:white; font-weight:bold; margin-bottom: 8px;">🧠 Baixar Assistente Offline</button>
 
       <button onclick="exportBackup()">Exportar Registro Criptografado</button>
@@ -669,7 +669,7 @@
       }
     }
 
-    /* DOWNLOAD REAL COM AVISO DE SEGURANÇA E HARDWARE */
+    /* --- V3.9 DOWNLOAD REAL COM AVISO DE SEGURANÇA E HARDWARE (ACOLHEDOR) --- */
     window.downloadRealAI = async function() {
       if (!navigator.gpu) {
         alert("Sabe, acabei de checar e o seu aparelho não suporta essa Inteligência Artificial mais pesada. Mas não precisa se preocupar, de verdade! O meu 'Escudo de Proteção' já está ativado e vai continuar cuidando de você sempre que faltar internet.");
@@ -683,7 +683,8 @@
       }
 
       const btn = document.getElementById('download-ai-btn');
-      btn.innerText = "Preparando motor..."; btn.style.background = "#fdcb6e"; btn.style.color = "#333"; btn.disabled = true;
+      btn.innerText = "Preparando o meu cérebro..."; 
+      btn.style.background = "#fdcb6e"; btn.style.color = "#333"; btn.disabled = true;
 
       try {
         const { CreateMLCEngine } = await import('https://esm.run/@mlc-ai/web-llm');
@@ -695,12 +696,15 @@
         window.offlineAIEngine.engine = await CreateMLCEngine(selectedModel, { initProgressCallback: initProgressCallback });
         window.offlineAIEngine.isLoaded = true;
         
+        // MARCADOR DE SEGURANÇA: Salva que o usuário já consentiu e baixou
+        localStorage.setItem('ia_offline_instalada', 'true');
+
         btn.innerText = "🧠 IA Offline Instalada"; btn.style.background = "#2ed573"; btn.style.color = "white";
         alert("Tudo pronto! Seu assistente offline foi instalado com sucesso.");
         updateNetworkStatus();
       } catch (error) {
         console.error(error);
-        btn.innerText = "Erro ao baixar (Tente no Wi-Fi)"; btn.style.background = "#e17055"; btn.style.color = "white"; btn.disabled = false;
+        btn.innerText = "Erro ao baixar (Tente com Wi-Fi)"; btn.style.background = "#e17055"; btn.style.color = "white"; btn.disabled = false;
       }
     };
 
@@ -726,17 +730,27 @@
 
     window.onload = () => {
       registrarTelemetria(); loadState(); initCanvas(); initVoices(); initVLibras(); initMicroExpressionEngine(); initNetworkMonitor();
+      
+      // Atualiza visual do botão caso a IA já tenha sido instalada antes
+      if (localStorage.getItem('ia_offline_instalada') === 'true') {
+         const btn = document.getElementById('download-ai-btn');
+         if(btn) { btn.innerText = "🧠 IA Offline Instalada"; btn.style.background = "#2ed573"; btn.style.color = "white"; btn.disabled = true; }
+      }
+
       setTimeout(() => {
         logoAnchor.appendChild(heroWrapper); heroWrapper.classList.add('minimized');
         brandTitle.classList.add('visible'); chatContainer.classList.add('visible');
         
-        import('https://esm.run/@mlc-ai/web-llm').then(async (webllm) => {
-          try {
-            window.offlineAIEngine.engine = await webllm.CreateMLCEngine("TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC");
-            window.offlineAIEngine.isLoaded = true;
-            updateNetworkStatus();
-          } catch(e) {}
-        }).catch(err => {});
+        // SÓ carrega a IA no background se o usuário já tiver baixado voluntariamente antes!
+        if (localStorage.getItem('ia_offline_instalada') === 'true') {
+            import('https://esm.run/@mlc-ai/web-llm').then(async (webllm) => {
+              try {
+                window.offlineAIEngine.engine = await webllm.CreateMLCEngine("TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC");
+                window.offlineAIEngine.isLoaded = true;
+                updateNetworkStatus();
+              } catch(e) {}
+            }).catch(err => {});
+        }
       }, cycleDuration);
       requestAnimationFrame(animateLogo);
     };
@@ -866,7 +880,7 @@
     function toggleAudioForParagraph(pText, pElem, btnElem) { if (!('speechSynthesis' in window)) return alert("Síntese de voz não suportada."); if (currentSpeakingPElem === pElem && window.speechSynthesis.speaking) { window.speechSynthesis.cancel(); resetAudioState(); return; } window.speechSynthesis.cancel(); resetAudioState(); const utterance = new SpeechSynthesisUtterance(pText); utterance.lang = 'pt-BR'; const voices = window.speechSynthesis.getVoices(); if (state.voiceSettings && voices[state.voiceSettings.voiceIndex]) { utterance.voice = voices[state.voiceSettings.voiceIndex]; utterance.pitch = parseFloat(state.voiceSettings.pitch || 1.0); utterance.rate = parseFloat(state.voiceSettings.rate || 0.95); utterance.volume = parseFloat(state.voiceSettings.volume || 1.0); } else utterance.rate = 0.95; utterance.onend = () => { pElem.classList.remove('speaking'); if (btnElem) btnElem.innerText = '🔊'; currentSpeakingPElem = null; const autoAdvance = state.voiceSettings ? state.voiceSettings.autoAdvance : true; if (autoAdvance) { const parentMsg = pElem.closest('.message'); if (parentMsg) { const paragraphs = Array.from(parentMsg.querySelectorAll('.paragraph-item')); const currentIndex = paragraphs.indexOf(pElem); if (currentIndex !== -1 && currentIndex < paragraphs.length - 1) { const nextPElem = paragraphs[currentIndex + 1]; const nextBtnElems = nextPElem.querySelectorAll('.access-btn'); let nextBtnElem = null; nextBtnElems.forEach(b => { if(b.innerText === '🔊') nextBtnElem = b; }); const nextText = nextPElem.querySelector('.paragraph-text').innerText; setTimeout(() => { toggleAudioForParagraph(nextText, nextPElem, nextBtnElem); }, 250); } } } }; utterance.onerror = () => resetAudioState(); pElem.classList.add('speaking'); if (btnElem) btnElem.innerText = '⏹️'; currentSpeakingPElem = pElem; window.speechSynthesis.speak(utterance); }
     function handleFileUpload(event) { const file = event.target.files[0]; if (!file) return; appendMessage(`[Anexo Enviado: ${file.name}]`, 'user'); const reader = new FileReader(); reader.onloadend = () => { const fileBase64 = reader.result; processUserMessage(`Acabei de anexar um arquivo chamado "${file.name}". Por favor, verifique o conteúdo dele e responda apropriadamente.`, fileBase64, file.type); }; reader.readAsDataURL(file); }
 
-    /* ROTEADOR MULTIMODAL (FILTRO DE PALAVRAS EXATO FIX) */
+    /* ROTEADOR MULTIMODAL */
     async function processUserMessageWithCascade(userText, mediaPayload, mimeType) {
       const txt = userText.toUpperCase();
       let suggestedCBT = null;
@@ -1047,7 +1061,7 @@
               const newWorker = reg.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  if (confirm("Uma nova atualização do Aquele Abraço (V3.8) está disponível! Deseja aplicar as correções agora?")) {
+                  if (confirm("Uma nova atualização do Aquele Abraço (V3.9) está disponível! Deseja aplicar as correções agora?")) {
                     newWorker.postMessage({ action: 'skipWaiting' });
                     window.location.reload();
                   }
